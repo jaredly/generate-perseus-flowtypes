@@ -154,6 +154,43 @@ const typesEqual = (one: Type, two: Type): boolean => {
 
 const MAX_LITERAL_UNION = 10;
 
+const tupleAndArray = (one: Type, two: Type): Type | null => {
+    if (
+        two.type === 'tuple' &&
+        one.type === 'array'
+        // two.items.every((t) => typesEqual(t, (one as ArrayT).item))
+    ) {
+        // return one;
+        let el = one.item;
+        two.items.forEach((item) => (el = unify(el, item)));
+        return { type: 'array', item: el };
+    }
+    return null;
+};
+
+const unionAndString = (one: Type, two: Type): Type | null => {
+    if (
+        one.type === 'union' &&
+        one.options.every(
+            (t) =>
+                t.type === 'literal' ||
+                t.type === 'string' ||
+                t.type === 'null',
+        ) &&
+        one.options.length > MAX_LITERAL_UNION &&
+        (two.type === 'literal' || two.type === 'string' || two.type === 'null')
+    ) {
+        if (two.type === 'null' && one.options.some((t) => t.type === 'null')) {
+            return {
+                type: 'union',
+                options: [{ type: 'string' }, { type: 'null' }],
+            };
+        }
+        return { type: 'string' };
+    }
+    return null;
+};
+
 const unify = (one: Type, two: Type): Type => {
     if (one.type !== two.type) {
         if (one.type === 'string' && two.type === 'literal') {
@@ -168,42 +205,25 @@ const unify = (one: Type, two: Type): Type => {
         if (two.type === 'empty-array' && one.type === 'array') {
             return one;
         }
-        if (one.type === 'tuple' && two.type === 'array') {
-            let el = two.item;
-            one.items.forEach((item) => (el = unify(el, item)));
-            return { type: 'array', item: el };
+
+        let merged: Type | null;
+        merged = tupleAndArray(one, two);
+        if (merged != null) {
+            return merged;
         }
-        if (
-            two.type === 'tuple' &&
-            one.type === 'array'
-            // two.items.every((t) => typesEqual(t, (one as ArrayT).item))
-        ) {
-            // return one;
-            let el = one.item;
-            two.items.forEach((item) => (el = unify(el, item)));
-            return { type: 'array', item: el };
+        merged = tupleAndArray(two, one);
+        if (merged != null) {
+            return merged;
         }
-        // START HERE: factor this out, and make it work for null | string | literalsssss
-        if (
-            one.type === 'union' &&
-            one.options.every(
-                (t) => t.type === 'literal' || t.type === 'string',
-            ) &&
-            one.options.length > MAX_LITERAL_UNION &&
-            (two.type === 'literal' || two.type === 'string')
-        ) {
-            return { type: 'string' };
+        merged = unionAndString(one, two);
+        if (merged != null) {
+            return merged;
         }
-        if (
-            two.type === 'union' &&
-            two.options.every(
-                (t) => t.type === 'literal' || t.type === 'string',
-            ) &&
-            two.options.length > MAX_LITERAL_UNION &&
-            (one.type === 'literal' || one.type === 'string')
-        ) {
-            return { type: 'string' };
+        merged = unionAndString(two, one);
+        if (merged != null) {
+            return merged;
         }
+
         if (one.type === 'union') {
             if (
                 two.type === 'string' &&
