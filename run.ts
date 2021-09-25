@@ -198,52 +198,36 @@ const unionAndString = (one: Type, two: Type): Type | null => {
     return null;
 };
 
+const mergers: Array<(one: Type, two: Type) => Type | null> = [
+    tupleAndArray,
+    unionAndString,
+    (one: Type, two: Type) =>
+        one.type === 'string' && two.type === 'literal' ? one : null,
+    (one: Type, two: Type) =>
+        one.type === 'empty-array' && two.type === 'array' ? two : null,
+    (one: Type, two: Type) =>
+        one.type === 'nullable'
+            ? two.type === 'null'
+                ? one
+                : { type: 'nullable', inner: unify(one.inner, two) }
+            : null,
+];
+
 // NEXT UP: Got to infer tagged unions folks.
 // IF the only consistent attribute between two objects is `type`, then just treat them as distinct.
 
 const unify = (one: Type, two: Type): Type => {
     if (one.type !== two.type) {
-        if (one.type === 'string' && two.type === 'literal') {
-            return one;
-        }
-        if (two.type === 'string' && one.type === 'literal') {
-            return two;
-        }
-        if (one.type === 'empty-array' && two.type === 'array') {
-            return two;
-        }
-        if (two.type === 'empty-array' && one.type === 'array') {
-            return one;
-        }
-        if (one.type === 'nullable') {
-            if (two.type === 'null') {
-                return one;
+        for (let merger of mergers) {
+            let merged: Type | null;
+            merged = merger(one, two);
+            if (merged != null) {
+                return merged;
             }
-            return { type: 'nullable', inner: unify(one.inner, two) };
-        }
-        if (two.type === 'nullable') {
-            if (one.type === 'null') {
-                return two;
+            merged = merger(two, one);
+            if (merged != null) {
+                return merged;
             }
-            return { type: 'nullable', inner: unify(two.inner, one) };
-        }
-
-        let merged: Type | null;
-        merged = tupleAndArray(one, two);
-        if (merged != null) {
-            return merged;
-        }
-        merged = tupleAndArray(two, one);
-        if (merged != null) {
-            return merged;
-        }
-        merged = unionAndString(one, two);
-        if (merged != null) {
-            return merged;
-        }
-        merged = unionAndString(two, one);
-        if (merged != null) {
-            return merged;
         }
 
         if (one.type === 'union') {
@@ -340,8 +324,15 @@ const unify = (one: Type, two: Type): Type => {
             }
         }
         case 'object': {
-            const result: { [key: string]: Type } = {};
             const tw = two as Obj;
+            const commonAttrs = Object.keys(tw.attributes).filter(
+                (name) => one.attributes[name] != null,
+            );
+            // Treat this as a tagged union
+            if (commonAttrs.length === 1 && commonAttrs[0] === 'type') {
+                return { type: 'union', options: [one, two] };
+            }
+            const result: { [key: string]: Type } = {};
             Object.keys(one.attributes).forEach((k) => {
                 result[k] = unify(
                     one.attributes[k],
@@ -452,7 +443,7 @@ const typeFromValue = (value: unknown): Type => {
 
 // const typesByWidget =
 
-const output: Array<bt.DeclareTypeAlias> = [];
+const output: Array<bt.TypeAlias> = [];
 
 Object.keys(data).some((type) => {
     let t: Type | null = null;
@@ -465,7 +456,11 @@ Object.keys(data).some((type) => {
         }
     });
     output.push(
-        bt.declareTypeAlias(bt.identifier(type), null, flowTypeFromType(t!)),
+        bt.typeAlias(
+            bt.identifier(type.replace(/-/g, '_')),
+            null,
+            flowTypeFromType(t!),
+        ),
     );
     return false;
 });

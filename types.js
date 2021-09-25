@@ -1,4 +1,4 @@
-declare type categorizer = {
+type categorizer = {
   items: string[],
   values: (?number)[],
   randomizeItems: ?boolean,
@@ -14,7 +14,7 @@ declare type categorizer = {
 };
 
 
-declare type simulator = {
+type simulator = {
   xAxisLabel: "Proportion (%)",
   proportionOrPercentage: "percentage" | "proportion",
   yAxisLabel: string,
@@ -23,7 +23,7 @@ declare type simulator = {
 };
 
 
-declare type image = {
+type image = {
   box: [number, number],
   title: string,
   labels: empty[] | [{
@@ -43,7 +43,7 @@ declare type image = {
 };
 
 
-declare type orderer = {
+type orderer = {
   otherOptions: {
     content: string
   }[],
@@ -58,7 +58,7 @@ declare type orderer = {
 };
 
 
-declare type radio = {
+type radio = {
   displayCount: null,
   choices: {
     content: string,
@@ -76,7 +76,7 @@ declare type radio = {
 };
 
 
-declare type grapher = {
+type grapher = {
   graph: {
     rulerTicks: number,
     labels: ["x" | "\\text{Boats}" | "", "y" | "\\text{Cars}" | "f(x)" | ""],
@@ -110,10 +110,10 @@ declare type grapher = {
 };
 
 
-declare type graded-group = PerseusContent;
+type graded_group = PerseusContent;
 
 
-declare type table = {
+type table = {
   headers: ("" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$")[],
   rows: number,
   columns: number,
@@ -121,7 +121,7 @@ declare type table = {
 };
 
 
-declare type label-image = {
+type label_image = {
   imageAlt: string,
   imageUrl: string,
   markers: {
@@ -139,7 +139,7 @@ declare type label-image = {
 };
 
 
-declare type transformer = {
+type transformer = {
   graphMode: "dynamic" | "interactive",
   gradeEmpty: boolean,
   graph: {
@@ -209,23 +209,30 @@ declare type transformer = {
       coords: [number, number][],
       options: {}[],
     },
-    transformations: {
-      type: "rotation" | "reflection" | "translation" | "dilation",
-      center: ?[number, number],
-      angleDeg: ?number,
-      line: ?[[number, number], [number, number]],
-      vector: ?[number, number],
-      scale: ?number,
-    }[],
+    transformations: ({
+      type: "rotation",
+      center: [number, number],
+      angleDeg: number,
+    } | {
+      line: [[number, number], [number, number]],
+      type: "reflection",
+    } | {
+      vector: [number, number],
+      type: "translation",
+    } | {
+      scale: number,
+      type: "dilation",
+      center: [number, number],
+    })[],
   },
   drawSolutionShape: boolean,
 };
 
 
-declare type group = PerseusContent;
+type group = PerseusContent;
 
 
-declare type matrix = {
+type matrix = {
   cursorPosition: [number, number],
   suffix: "",
   answers: (?number)[][],
@@ -235,7 +242,7 @@ declare type matrix = {
 };
 
 
-declare type passage-ref = {
+type passage_ref = {
   passageNumber: number,
   referenceNumber: number,
   static: ?boolean,
@@ -243,7 +250,7 @@ declare type passage-ref = {
 };
 
 
-declare type passage = {
+type passage = {
   passageTitle: "" | "Passage A" | "Passage B" | "Dark Snow",
   footnotes: "",
   static: boolean,
@@ -252,7 +259,7 @@ declare type passage = {
 };
 
 
-declare type input-number = {
+type input_number = {
   maxError: number | "0.1" | "1" | "0.01" | "0.04",
   inexact: boolean,
   value: "0.5" | "38" | number | "0" | "2" | "1" | "69000" | "5200" | "5027",
@@ -263,7 +270,7 @@ declare type input-number = {
 };
 
 
-declare type measurer = {
+type measurer = {
   box: [number, number],
   rulerTicks: number,
   showProtractor: boolean,
@@ -280,7 +287,7 @@ declare type measurer = {
 };
 
 
-declare type dropdown = {
+type dropdown = {
   static: ?boolean,
   placeholder: string,
   choices: {
@@ -290,7 +297,7 @@ declare type dropdown = {
 };
 
 
-declare type matcher = {
+type matcher = {
   padding: boolean,
   orderMatters: boolean,
   labels: [string, string],
@@ -299,7 +306,7 @@ declare type matcher = {
 };
 
 
-declare type explanation = {
+type explanation = {
   hidePrompt: "Hide explanation" | "Hide explanation " | "Got it, thanks!" | "Hide diagram." | "Hide reference" | "Hide footnote",
   widgets: ?{
     "image 1": ?{
@@ -333,19 +340,19 @@ declare type explanation = {
 };
 
 
-declare type sequence = {
+type sequence = {
   json: PerseusContent[]
 };
 
 
-declare type sorter = {
+type sorter = {
   padding: boolean,
   layout: "horizontal" | "vertical",
   correct: string[],
 };
 
 
-declare type number-line = {
+type number_line = {
   labelRange: [?number, ?number],
   tickStep: ?number,
   labelStyle: "decimal" | "improper" | "non-reduced",
@@ -364,12 +371,12 @@ declare type number-line = {
 };
 
 
-declare type graded-group-set = {
+type graded_group_set = {
   gradedGroups: empty[]
 };
 
 
-declare type cs-program = {
+type cs_program = {
   settings: {
     name: "question" | "" | "probHeads",
     value: string,
@@ -383,13 +390,13 @@ declare type cs-program = {
 };
 
 
-declare type passage-ref-target = {
+type passage_ref_target = {
   content: "",
   static: boolean,
 };
 
 
-declare type numeric-input = {
+type numeric_input = {
   coefficient: boolean,
   labelText: "" | "The value equals" | null | "displacement" | "distance traveled" | string | "percentile" | "radius" | "diameter",
   rightAlign: ?boolean,
@@ -408,14 +415,14 @@ declare type numeric-input = {
 };
 
 
-declare type definition = {
+type definition = {
   definition: string,
   togglePrompt: string,
   static: boolean,
 };
 
 
-declare type interaction = {
+type interaction = {
   graph: {
     box: [number, number],
     tickStep: [number, number],
@@ -477,7 +484,7 @@ declare type interaction = {
 };
 
 
-declare type plotter = {
+type plotter = {
   maxY: number,
   type: "pic" | "bar" | "dotplot" | "line" | "histogram",
   labels: [string, string],
@@ -494,17 +501,40 @@ declare type plotter = {
 };
 
 
-declare type interactive-graph = {
+type interactive_graph = {
   rulerTicks: ?number,
   showProtractor: boolean,
   graph: {
-    type: "point" | "linear" | "segment" | "polygon" | "linear-system",
-    numPoints: number | "unlimited" | null,
-    numSegments: ?number,
-    numSides: ?number,
-    showSides: ?boolean,
-    showAngles: ?boolean,
-    snapTo: ?"grid",
+    type: "point",
+    numPoints: number | "unlimited",
+  } | {
+    type: "linear"
+  } | {
+    type: "point",
+    numPoints: number,
+  } | {
+    numSegments: number,
+    type: "segment",
+  } | {
+    numSides: number,
+    type: "polygon",
+  } | {
+    type: "linear-system"
+  } | {
+    type: "segment"
+  } | {
+    type: "point",
+    numPoints: "unlimited",
+  } | {
+    type: "polygon"
+  } | {
+    type: "point"
+  } | {
+    numSides: number,
+    showSides: boolean,
+    type: "polygon",
+    showAngles: boolean,
+    snapTo: "grid",
   },
   snapStep: ?[number, number],
   labels: ?["x" | "$\\text{Age}$", "y" | "$\\text{Sleep}$"],
@@ -524,7 +554,7 @@ declare type interactive-graph = {
   showTooltips: ?boolean,
   rulerLabel: ?"",
   correct: {
-    coords: ?[number | [number, number], number | [number, number]][],
+    coords: [number | [number, number], number | [number, number]][],
     numPoints: number | "unlimited" | null,
     type: "point" | "linear" | "segment" | "polygon" | "linear-system",
     numSegments: ?number,
@@ -533,11 +563,53 @@ declare type interactive-graph = {
     showSides: ?boolean,
     showAngles: ?boolean,
     match: ?"congruent",
+  } | {
+    type: "point"
+  } | {
+    coords: [number, number][],
+    numPoints: "unlimited",
+    type: "point",
+  } | {
+    coords: [[number, number]],
+    numPoints: number,
+    type: "point",
+  } | {
+    type: "linear",
+    coords: [[number, number], [number, number]],
+  } | {
+    type: "point",
+    coords: [[number, number]],
+  } | {
+    numSegments: number,
+    coords: [[[number, number], [number, number]], [[number, number], [number, number]]],
+    type: "segment",
+  } | {
+    type: "polygon",
+    coords: [[number, number], [number, number], [number, number]],
+  } | {
+    coords: null,
+    numPoints: number,
+    type: "point",
+  } | {
+    type: "segment",
+    coords: [[[number, number], [number, number]]],
+  } | {
+    coords: [[number, number], [number, number]],
+    numPoints: number,
+    type: "point",
+  } | {
+    numSides: number,
+    snapTo: "grid",
+    coords: [number, number][],
+    showSides: boolean,
+    type: "polygon",
+    showAngles: boolean,
+    match: "congruent",
   },
 };
 
 
-declare type iframe = {
+type iframe = {
   settings: {
     name: string,
     value: string,
@@ -551,7 +623,7 @@ declare type iframe = {
 };
 
 
-declare type lights-puzzle = {
+type lights_puzzle = {
   startCells: boolean[][],
   flipPattern: "x" | "plus" | null,
   static: ?boolean,
@@ -559,13 +631,13 @@ declare type lights-puzzle = {
 };
 
 
-declare type video = {
+type video = {
   location: string,
   static: ?boolean,
 };
 
 
-declare type expression = {
+type expression = {
   functions: ["f" | "A", "g" | "L", "h" | "W"],
   answerForms: ?{
     considered: "correct" | "wrong",
