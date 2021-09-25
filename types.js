@@ -25,7 +25,7 @@ declare type simulator = {
 
 declare type image = {
   box: [number, number],
-  title: "",
+  title: string,
   labels: empty[] | [{
     content: "",
     coordinates: [number, number],
@@ -38,7 +38,7 @@ declare type image = {
     width: number,
     height: number,
   },
-  static: boolean,
+  static: boolean | null,
   alt: string,
 };
 
@@ -50,11 +50,31 @@ declare type orderer = {
   layout: "vertical" | "horizontal",
   options: {
     content: string
-  }[],
+  }[] | null | {
+    content: "go" | "I'm" | "outside" | "tired" | "to" | "too"
+  }[] | [{
+    content: "$n + q$"
+  }, {
+    content: "$n - q$"
+  }, {
+    content: "$q-n$"
+  }] | {
+    content: "man" | "in" | "moon" | "the"
+  }[] | {
+    content: "French" | "black-and-white" | "a" | "depressing" | "movie"
+  }[] | {
+    content: "extremely" | "It" | "hot" | "outside" | "was"
+  }[] | {
+    content: "new" | "car" | "red" | "the"
+  }[] | {
+    content: "in" | "We" | "it" | "just" | "made" | "time"
+  }[] | [{
+    content: string
+  }],
   correctOptions: {
     content: string
   }[],
-  height: "normal",
+  height: "normal" | "auto",
 };
 
 
@@ -63,22 +83,23 @@ declare type radio = {
   choices: {
     content: string,
     isNoneOfTheAbove: boolean | null,
-    clue: string | null,
+    clue: string | null | "This is the cosine." | "This is the sine.",
     correct: null | boolean,
   }[],
   countChoices: boolean | null,
-  hasNoneOfTheAbove: boolean,
+  hasNoneOfTheAbove: boolean | null,
   multipleSelect: boolean,
   randomize: boolean,
   deselectEnabled: boolean,
   onePerLine: null | boolean,
+  noneOfTheAbove: null | boolean,
 };
 
 
 declare type grapher = {
   graph: {
     rulerTicks: number,
-    labels: ["x" | "\\text{Boats}", "y" | "\\text{Cars}"],
+    labels: ["x" | "\\text{Boats}" | "", "y" | "\\text{Cars}" | "f(x)" | ""],
     range: [[number, number], [number, number]],
     step: [number, number],
     valid: boolean | null,
@@ -93,7 +114,7 @@ declare type grapher = {
     },
     rulerLabel: "",
     snapStep: null | [number, number],
-    editableSettings: null | ["graph", "snap", "image"],
+    editableSettings: null | ["graph", "snap", "image"] | ("snap" | "graph" | "image" | "measure")[],
     gridStep: null | [number, number],
     showRuler: null | boolean,
     showProtractor: null | boolean,
@@ -113,10 +134,10 @@ declare type graded-group = PerseusContent;
 
 
 declare type table = {
-  headers: ("" | "Compound" | "x" | "y")[],
+  headers: ("" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$")[],
   rows: number,
   columns: number,
-  answers: ("" | "hexadecanoic acid" | "a" | "b" | "c" | "1" | "0" | "2" | "3")[][],
+  answers: string[][],
 };
 
 
@@ -126,7 +147,7 @@ declare type label-image = {
   markers: {
     y: number,
     x: number,
-    answers: [string],
+    answers: string[],
     label: string,
   }[],
   choices: string[],
@@ -163,7 +184,7 @@ declare type transformer = {
   },
   starting: {
     shape: {
-      type: ["polygon-5" | "polygon-3" | "polygon-4"] | "polygon-3" | ["polygon-3"] | ["lineSegment", "lineSegment"],
+      type: ["polygon-5" | "polygon-3" | "polygon-4"] | "polygon-3" | ["polygon-3"] | ["lineSegment", "lineSegment"] | ["polygon-5"] | ["polygon-4"] | ["polygon-6"],
       coords: [number, number][],
       options: null | [{}] | [{}, {}],
     },
@@ -204,7 +225,7 @@ declare type transformer = {
   },
   correct: {
     shape: {
-      type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment")[],
+      type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6")[],
       coords: [number, number][],
       options: {}[],
     },
@@ -243,7 +264,7 @@ declare type passage-ref = {
 
 
 declare type passage = {
-  passageTitle: "",
+  passageTitle: "" | "Passage A" | "Passage B" | "Dark Snow",
   footnotes: "",
   static: boolean,
   passageText: string,
@@ -252,9 +273,9 @@ declare type passage = {
 
 
 declare type input-number = {
-  maxError: number | "0.1",
+  maxError: number | "0.1" | "1" | "0.01" | "0.04",
   inexact: boolean,
-  value: "0.5" | "38" | number | "0" | "2" | "1" | "69000",
+  value: "0.5" | "38" | number | "0" | "2" | "1" | "69000" | "5200" | "5027",
   simplify: "required",
   answerType: "number",
   size: "normal" | "small",
@@ -299,7 +320,7 @@ declare type matcher = {
 
 
 declare type explanation = {
-  hidePrompt: "Hide explanation" | "Hide explanation " | "Got it, thanks!" | "Hide diagram.",
+  hidePrompt: "Hide explanation" | "Hide explanation " | "Got it, thanks!" | "Hide diagram." | "Hide reference" | "Hide footnote",
   widgets: {
     "image 1": null | {
       graded: boolean,
@@ -325,9 +346,9 @@ declare type explanation = {
       },
       alignment: "block",
     }
-  },
+  } | null | {},
   explanation: string,
-  static: boolean,
+  static: boolean | null,
   showPrompt: string,
 };
 
@@ -353,7 +374,7 @@ declare type number-line = {
   snapDivisions: number,
   labelTicks: boolean,
   initialX: null | number,
-  correctRel: "eq" | "gt" | "le",
+  correctRel: "eq" | "gt" | "le" | "lt" | "ge",
   static: boolean | null,
   divisionRange: [number, number],
   correctX: number | null,
@@ -390,7 +411,7 @@ declare type passage-ref-target = {
 
 declare type numeric-input = {
   coefficient: boolean,
-  labelText: "" | "The value equals" | null | "displacement" | "distance traveled" | string,
+  labelText: "" | "The value equals" | null | "displacement" | "distance traveled" | string | "percentile" | "radius" | "diameter",
   rightAlign: boolean | null,
   answers: {
     status: "correct" | "wrong",
@@ -399,7 +420,7 @@ declare type numeric-input = {
     value: number,
     simplify: "required" | "optional" | boolean,
     message: string,
-    answerForms: null | ["proper", "improper", "mixed"] | ["decimal"] | empty[],
+    answerForms: null | ["proper", "improper", "mixed"] | ["decimal"] | empty[] | ("decimal" | "integer" | "proper" | "improper")[] | ["proper", "improper"] | ("decimal" | "integer" | "proper" | "improper" | "mixed" | "pi")[],
   }[],
   static: boolean | null,
   multipleNumberInput: boolean | null,
@@ -442,33 +463,35 @@ declare type interaction = {
     rulerLabel: null | "",
   },
   elements: {
-    type: "label" | "point" | "line" | "movable-point" | "rectangle" | "parametric",
+    type: "label" | "point" | "line" | "movable-point" | "rectangle" | "parametric" | "function",
     options: {
-      color: "black" | "#6495ED" | null | "#FF00AF" | "#9AB8ED" | "#9BEDCE" | "#9D38BD" | "#28AE7B",
-      coordX: string,
-      coordY: string | null | "2.5" | "4.5" | "0" | "-1" | "2.2" | "1.9" | "2.1" | "3.5",
-      label: string | null | "6" | "14",
+      color: "black" | "#6495ED" | null | "#FF00AF" | "#9AB8ED" | "#9BEDCE" | "#9D38BD" | "#28AE7B" | "#EDD19B",
+      coordX: string | null | "0" | "2.25" | "7.75",
+      coordY: string | null | "1" | "-.75" | "-0.75",
+      label: string | null | "$\\text{Shape A}$" | "$\\text{Shape B}$",
       strokeDasharray: "" | null | ".",
-      startX: string | null,
-      startY: string | null,
-      endY: string | null,
-      endX: string | null,
+      startX: string | null | "5" | "-6" | "x_0" | "x_1" | "0" | "-2" | "3" | "10" | "2.5" | "1" | "-1" | "-8" | "5.5",
+      startY: string | null | "-2" | "4" | "y_0" | "y_1" | "0" | "5" | "0.5" | "15",
+      endY: string | null | "y_1" | "10" | "0" | "5" | "0.5" | "12" | "-12",
+      endX: string | null | "x_1" | "x_0" | "0" | "10" | "3" | "7" | "2.5" | "8" | "9" | "4.5",
       arrows: "" | null | "->",
       strokeWidth: number | null,
-      constraintFn: null | "0" | "-9",
-      constraintYMin: null | "-10" | "6",
-      constraintXMax: null | "10" | "4.5" | "3" | "9",
+      constraintFn: null | "0" | "-9" | "3" | "-4" | "0.5",
+      constraintYMin: null | "-10" | "6" | "3" | "-4" | "0",
+      constraintXMax: null | "10" | "4.5" | "3" | "9" | "8" | "6" | "0",
       varSubscript: null | number,
       constraint: null | "snap" | "y" | "none",
-      constraintXMin: null | "-10" | "0" | "5.5" | "3" | "5",
+      constraintXMin: null | "-10" | "0" | "5.5" | "3" | "5" | "1.5" | "2",
       snap: null | number,
-      constraintYMax: null | "10" | "6",
-      width: "1+x_0\\cdot0.15" | null | string,
-      height: "3+x_0\\cdot0.45" | null | string,
-      rangeMin: null | "0",
+      constraintYMax: null | "10" | "6" | "3" | "-4" | "0",
+      width: "1+x_0\\cdot0.15" | null | string | "2.8" | "2" | "2+x_0\\cdot0.6",
+      height: "3+x_0\\cdot0.45" | null | string | "5" | "4-x_0\\cdot0.6",
+      rangeMin: null | "0" | "6" | "-7",
       y: null | "2+\\sin(t)",
       x: null | "-2+\\cos(t)",
-      rangeMax: null | "2\\pi",
+      rangeMax: null | "2\\pi" | "6" | "9" | "10",
+      value: string | null,
+      funcName: "f" | null | "g",
     },
     key: string,
   }[],
@@ -487,6 +510,9 @@ declare type plotter = {
   correct: number[],
   snapsPerLine: number,
   picUrl: string | null,
+  picSize: null | number,
+  plotDimensions: null | [number, number],
+  picBoxHeight: null | number,
 };
 
 
@@ -503,7 +529,7 @@ declare type interactive-graph = {
     snapTo: null | "grid",
   },
   snapStep: [number, number] | null,
-  labels: ["x", "y"] | null,
+  labels: ["x", "y"] | null | ["$\\text{Age}$", "$\\text{Sleep}$"],
   step: [number, number],
   gridStep: [number, number] | null,
   backgroundImage: {
@@ -520,7 +546,7 @@ declare type interactive-graph = {
   showTooltips: boolean | null,
   rulerLabel: "" | null,
   correct: {
-    coords: [number | [number, number], number | [number, number]][],
+    coords: [number | [number, number], number | [number, number]][] | null | [number, number][] | [[number, number]] | [[number, number], [number, number]] | [[[number, number], [number, number]], [[number, number], [number, number]]] | [[number, number], [number, number], [number, number]] | [[[number, number], [number, number]]],
     numPoints: number | "unlimited" | null,
     type: "point" | "linear" | "segment" | "polygon" | "linear-system",
     numSegments: null | number,
@@ -539,8 +565,8 @@ declare type iframe = {
     value: string,
   }[],
   url: string,
-  height: "420" | "405" | "410" | "400" | "300" | "200" | "" | "340" | "500",
-  width: "840" | "425" | "440" | "410" | "420" | "400" | "",
+  height: "420" | "405" | "410" | "400" | "300" | "200" | "" | "340" | "500" | "440" | number,
+  width: "840" | "425" | "440" | "410" | "420" | "400" | "" | "405" | number | "800",
   allowFullScreen: boolean,
   static: boolean | null,
   allowTopNavigation: boolean | null,
@@ -562,7 +588,7 @@ declare type video = {
 
 
 declare type expression = {
-  functions: ["f", "g", "h"],
+  functions: ["f" | "A", "g" | "L", "h" | "W"],
   answerForms: {
     considered: "correct",
     simplify: boolean,
@@ -629,11 +655,112 @@ declare type expression = {
     value: "7065",
     form: boolean,
     key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "y\\le x-1",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "t=7m",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "-5",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "wrong",
+    simplify: boolean,
+    value: string,
+    form: boolean,
+    key: "1",
+  }, {
+    considered: "wrong",
+    simplify: boolean,
+    value: string,
+    form: boolean,
+    key: "2",
+  }, {
+    considered: "correct",
+    simplify: boolean,
+    value: string,
+    form: boolean,
+    key: "0",
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "\\frac{\\pi}{4}",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "8",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "-4.2c-5.55",
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "\\frac{1}{2}\\pi",
+    form: boolean,
+    key: number,
+  }, {
+    considered: "correct",
+    simplify: boolean,
+    value: "1.57",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "4-40i",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "2.35\\cdot10^{20}",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "9^2",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "-\\frac{1}{2}",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "0.5n^2+2n+2",
+    form: boolean,
+    key: number,
+  }] | [{
+    considered: "correct",
+    simplify: boolean,
+    value: "40",
+    form: boolean,
+    key: number,
   }],
-  buttonSets: ("basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms")[],
+  buttonSets: ("basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms")[] | null | ["basic"] | ["basic", "prealgebra"],
   times: boolean,
   form: null | boolean,
-  value: null | "5" | "-2e^2" | string,
+  value: null | "5" | "-2e^2" | string | "(1/27)*3^x",
   simplify: null | boolean,
   buttonsVisible: null | "never",
 };

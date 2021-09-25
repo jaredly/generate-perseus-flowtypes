@@ -421,7 +421,7 @@ const output: Array<bt.DeclareTypeAlias> = [];
 
 Object.keys(data).some((type) => {
     let t: Type | null = null;
-    data[type].slice(0, 20).forEach((item: unknown) => {
+    data[type].slice(0, 40).forEach((item: unknown) => {
         const tt = typeFromValue(item);
         if (t == null) {
             t = tt;
@@ -437,3 +437,5 @@ Object.keys(data).some((type) => {
 
 // console.log(generate);
 console.log(output.map((t) => generate.default(t).code).join('\n\n\n'));
+
+// TODO: start at: need to better merge unions of objects that have string literal values that differ, and should be unified as 'string'
