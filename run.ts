@@ -184,7 +184,7 @@ const unionAndString = (one: Type, two: Type): Type | null => {
                 t.type === 'string' ||
                 t.type === 'null',
         ) &&
-        one.options.length > MAX_LITERAL_UNION &&
+        (one.options.length > MAX_LITERAL_UNION || two.type === 'string') &&
         (two.type === 'literal' || two.type === 'string' || two.type === 'null')
     ) {
         if (two.type === 'null' && one.options.some((t) => t.type === 'null')) {
@@ -211,6 +211,31 @@ const mergers: Array<(one: Type, two: Type) => Type | null> = [
                 ? one
                 : { type: 'nullable', inner: unify(one.inner, two) }
             : null,
+    (one: Type, two: Type) => {
+        if (one.type !== 'union') {
+            return null;
+        }
+        // if (
+        //     two.type === 'string' &&
+        //     one.options.every(
+        //         (t) =>
+        //             t.type === 'literal' ||
+        //             t.type === 'string' ||
+        //             t.type === 'null',
+        //     ) &&
+        //     (one.options.length > MAX_LITERAL_UNION || two.type === 'string')
+        // ) {
+        //     return two;
+        // }
+        if (one.options.some((t) => typesEqual(t, two))) {
+            return one;
+        }
+        // TODO: I might want to go through the union to find the type that is "most similar"
+        // to the new type.
+        return { ...one, options: one.options.concat(two) };
+    },
+    (one: Type, two: Type) =>
+        one.type === 'null' ? { type: 'nullable', inner: two } : null,
 ];
 
 // NEXT UP: Got to infer tagged unions folks.
@@ -228,43 +253,6 @@ const unify = (one: Type, two: Type): Type => {
             if (merged != null) {
                 return merged;
             }
-        }
-
-        if (one.type === 'union') {
-            if (
-                two.type === 'string' &&
-                one.options.every(
-                    (t) => t.type === 'literal' || t.type === 'string',
-                )
-            ) {
-                return two;
-            }
-            if (one.options.some((t) => typesEqual(t, two))) {
-                return one;
-            }
-            // TODO: I might want to go through the union to find the type that is "most similar"
-            // to the new type.
-            return { ...one, options: one.options.concat(two) };
-        } else if (two.type === 'union') {
-            if (
-                one.type === 'string' &&
-                two.options.every(
-                    (t) => t.type === 'literal' || t.type === 'string',
-                )
-            ) {
-                return one;
-            }
-            if (two.options.some((t) => typesEqual(t, one))) {
-                return two;
-            }
-            return { ...two, options: two.options.concat(one) };
-        }
-
-        if (one.type === 'null') {
-            return { type: 'nullable', inner: two };
-        }
-        if (two.type === 'null') {
-            return { type: 'nullable', inner: one };
         }
 
         return { type: 'union', options: [one, two] };

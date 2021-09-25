@@ -398,7 +398,7 @@ type passage_ref_target = {
 
 type numeric_input = {
   coefficient: boolean,
-  labelText: "" | "The value equals" | null | "displacement" | "distance traveled" | string | "percentile" | "radius" | "diameter",
+  labelText: ?string,
   rightAlign: ?boolean,
   answers: {
     status: "correct" | "wrong",
