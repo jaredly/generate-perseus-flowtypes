@@ -17,6 +17,8 @@ type MapT = {
     value: Type;
 };
 
+type Nullable = { type: 'nullable'; inner: Type };
+
 type Obj = {
     type: 'object';
     attributes: { [key: string]: Type };
@@ -37,6 +39,7 @@ type Type =
     | { type: 'boolean' }
     | { type: 'empty-array' }
     | { type: 'perseus-content' }
+    | Nullable
     | Tuple
     | ArrayT
     | Literal
@@ -52,6 +55,8 @@ const flowTypeFromType = (t: Type): bt.FlowType => {
             return bt.booleanTypeAnnotation();
         case 'string':
             return bt.stringTypeAnnotation();
+        case 'nullable':
+            return bt.nullableTypeAnnotation(flowTypeFromType(t.inner));
         case 'perseus-content':
             return bt.genericTypeAnnotation(bt.identifier('PerseusContent'));
         case 'literal':
@@ -135,6 +140,8 @@ const typesEqual = (one: Type, two: Type): boolean => {
         }
         case 'perseus-content':
             return true;
+        case 'nullable':
+            return typesEqual(one.inner, (two as Nullable).inner);
         case 'union': {
             const tw = two as Union;
             return (
@@ -191,6 +198,9 @@ const unionAndString = (one: Type, two: Type): Type | null => {
     return null;
 };
 
+// NEXT UP: Got to infer tagged unions folks.
+// IF the only consistent attribute between two objects is `type`, then just treat them as distinct.
+
 const unify = (one: Type, two: Type): Type => {
     if (one.type !== two.type) {
         if (one.type === 'string' && two.type === 'literal') {
@@ -204,6 +214,18 @@ const unify = (one: Type, two: Type): Type => {
         }
         if (two.type === 'empty-array' && one.type === 'array') {
             return one;
+        }
+        if (one.type === 'nullable') {
+            if (two.type === 'null') {
+                return one;
+            }
+            return { type: 'nullable', inner: unify(one.inner, two) };
+        }
+        if (two.type === 'nullable') {
+            if (one.type === 'null') {
+                return two;
+            }
+            return { type: 'nullable', inner: unify(two.inner, one) };
         }
 
         let merged: Type | null;
@@ -253,6 +275,14 @@ const unify = (one: Type, two: Type): Type => {
             }
             return { ...two, options: two.options.concat(one) };
         }
+
+        if (one.type === 'null') {
+            return { type: 'nullable', inner: two };
+        }
+        if (two.type === 'null') {
+            return { type: 'nullable', inner: one };
+        }
+
         return { type: 'union', options: [one, two] };
     }
     switch (one.type) {
@@ -263,6 +293,11 @@ const unify = (one: Type, two: Type): Type => {
         case 'empty-array':
         case 'perseus-content':
             return one;
+        case 'nullable':
+            return {
+                type: 'nullable',
+                inner: unify(one.inner, (two as Nullable).inner),
+            };
         case 'tuple':
             if (one.items.length !== (two as Tuple).items.length) {
                 let elType: null | Type = null;
@@ -439,3 +474,4 @@ Object.keys(data).some((type) => {
 console.log(output.map((t) => generate.default(t).code).join('\n\n\n'));
 
 // TODO: start at: need to better merge unions of objects that have string literal values that differ, and should be unified as 'string'
+// Ohhh ok so just make a `Nullable` type, that will make a bunch of things simpler.
