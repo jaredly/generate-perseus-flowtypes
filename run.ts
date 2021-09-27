@@ -139,6 +139,12 @@ const typeDistance = (one: Type, two: Type): number => {
         if (two.type === 'nullable') {
             return 100 + typeDistance(two.inner, one);
         }
+        if (one.type === 'empty-array' && two.type === 'array') {
+            return 10;
+        }
+        if (one.type === 'array' && two.type === 'empty-array') {
+            return 10;
+        }
         // TODO: array and tuple?
         return 10000;
     }
