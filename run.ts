@@ -448,6 +448,22 @@ const unify = (one: Type, two: Type): Type => {
                         return;
                     }
                 }
+
+                let best: [number, number, Type] | null = null;
+                result.forEach((type, i) => {
+                    const dist = typeDistance(type, two);
+                    if (best == null || best[0] > dist) {
+                        best = [dist, i, type];
+                    }
+                });
+                if (best) {
+                    const neww = unify(best[2], option);
+                    if (neww.type !== 'union') {
+                        result[best[1]] = neww;
+                        return;
+                    }
+                }
+
                 if (result.some((v) => typesEqual(v, option))) {
                     return;
                 }
@@ -547,7 +563,7 @@ const output: Array<bt.TypeAlias> = [];
 
 Object.keys(data).some((type) => {
     let toplevelType: Type | null = null;
-    data[type].slice(0, 40).forEach((item: unknown) => {
+    data[type].forEach((item: unknown) => {
         const instanceType = typeFromValue(item);
         if (toplevelType == null) {
             toplevelType = instanceType;
