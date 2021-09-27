@@ -1,3 +1,5 @@
+// @flow
+
 type categorizer = {
   categories: string[],
   highlightLint?: boolean,

@@ -632,7 +632,7 @@ Object.keys(data).some((type) => {
 
 fs.writeFileSync(
     outFile,
-    output.map((t) => generate.default(t).code).join('\n\n'),
+    '// @flow\n\n' + output.map((t) => generate.default(t).code).join('\n\n'),
     'utf8',
 );
 
