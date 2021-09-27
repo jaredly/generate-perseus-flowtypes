@@ -13,7 +13,6 @@ type categorizer = {
   values: (?number)[],
 };
 
-
 type simulator = {
   numTrials: number,
   proportionLabel: string,
@@ -21,7 +20,6 @@ type simulator = {
   xAxisLabel: "Proportion (%)",
   yAxisLabel: string,
 };
-
 
 type image = {
   alt?: string,
@@ -54,7 +52,6 @@ type image = {
   title?: string,
 };
 
-
 type orderer = {
   correctOptions: {
     content: string
@@ -68,7 +65,6 @@ type orderer = {
     content: string
   }[],
 };
-
 
 type radio = {
   choices: {
@@ -87,7 +83,6 @@ type radio = {
   onePerLine?: boolean,
   randomize?: boolean,
 };
-
 
 type grapher = {
   availableTypes: ("linear" | "absolute_value" | "quadratic" | "exponential" | "logarithm" | "sinusoid" | "tangent")[],
@@ -142,7 +137,6 @@ type grapher = {
   },
 };
 
-
 type graded_group = {
   content: string,
   hint?: {
@@ -155,14 +149,12 @@ type graded_group = {
   widgets: PerseusWidgets,
 };
 
-
 type table = {
   answers: string[][],
   columns: number,
   headers: ("" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$")[],
   rows: number,
 };
-
 
 type label_image = {
   choices: string[],
@@ -180,7 +172,6 @@ type label_image = {
   multipleAnswers: boolean,
   static: boolean,
 };
-
 
 type transformer = {
   correct: {
@@ -297,14 +288,12 @@ type transformer = {
   version: number,
 };
 
-
 type group = {
   content: string,
   images: PerseusImages,
   metadata?: string[],
   widgets: PerseusWidgets,
 };
-
 
 type matrix = {
   answers: (?("11" | number))[][],
@@ -315,14 +304,12 @@ type matrix = {
   suffix: "",
 };
 
-
 type passage_ref = {
   passageNumber: number,
   referenceNumber: number,
   static?: boolean,
   summaryText?: "" | "It was . . . water" | "city...lanes" | "I . . . dance" | "Well . . . yawn" | "What . . . uglier" | "Ah . . . wife" | "At . . .enters",
 };
-
 
 type passage = {
   footnotes?: string,
@@ -331,7 +318,6 @@ type passage = {
   showLineNumbers: boolean,
   static?: boolean,
 };
-
 
 type input_number = {
   answerType?: "number" | "percent" | "integer" | "improper" | "rational" | "pi" | "decimal",
@@ -342,7 +328,6 @@ type input_number = {
   size: "normal" | "small",
   value: string | "38" | number | "0" | "2" | "1" | "69000" | "5200" | "5027" | "4" | "9" | "6" | "5.7" | "0.73" | "16.54" | "0.086" | "3" | "0.42" | "23.45" | "-0.75" | "38.18" | "40" | boolean,
 };
-
 
 type measurer = {
   box: [number, number],
@@ -363,7 +348,6 @@ type measurer = {
   static?: boolean,
 };
 
-
 type dropdown = {
   choices: {
     content: string,
@@ -373,7 +357,6 @@ type dropdown = {
   static?: boolean,
 };
 
-
 type matcher = {
   labels: [string, string],
   left: string[],
@@ -381,7 +364,6 @@ type matcher = {
   padding: boolean,
   right: string[],
 };
-
 
 type explanation = {
   explanation: string,
@@ -391,7 +373,6 @@ type explanation = {
   widgets?: PerseusWidgets,
 };
 
-
 type sequence = {
   json: {
     content: string,
@@ -400,13 +381,11 @@ type sequence = {
   }[]
 };
 
-
 type sorter = {
   correct: string[],
   layout: "horizontal" | "vertical",
   padding: boolean,
 };
-
 
 type number_line = {
   correctRel: "eq" | "gt" | "le" | "lt" | "ge",
@@ -426,11 +405,9 @@ type number_line = {
   tickStep?: number,
 };
 
-
 type graded_group_set = {
   gradedGroups: empty[]
 };
-
 
 type cs_program = {
   height: number,
@@ -445,12 +422,10 @@ type cs_program = {
   width: number,
 };
 
-
 type passage_ref_target = {
   content: "",
   static: boolean,
 };
-
 
 type numeric_input = {
   answers: {
@@ -489,13 +464,11 @@ type numeric_input = {
   valid?: boolean,
 };
 
-
 type definition = {
   definition: string,
   static: boolean,
   togglePrompt: string,
 };
-
 
 type interaction = {
   elements: ({
@@ -623,7 +596,6 @@ type interaction = {
   static?: boolean,
 };
 
-
 type plotter = {
   type: "pic",
   categories: string[],
@@ -680,7 +652,6 @@ type plotter = {
   snapsPerLine: number,
   starting: number[],
 };
-
 
 type interactive_graph = {
   backgroundImage: {
@@ -777,7 +748,6 @@ type interactive_graph = {
   valid?: boolean,
 };
 
-
 type iframe = {
   allowFullScreen: boolean,
   allowTopNavigation?: boolean,
@@ -791,7 +761,6 @@ type iframe = {
   width: "840" | "425" | "440" | "410" | "420" | "400" | "" | "405" | number | "800" | "380" | "480" | "415",
 };
 
-
 type lights_puzzle = {
   flipPattern?: "x" | "plus",
   gradeIncompleteAsWrong: boolean,
@@ -799,12 +768,10 @@ type lights_puzzle = {
   static?: boolean,
 };
 
-
 type video = {
   location: string,
   static?: boolean,
 };
-
 
 type expression = {
   answerForms?: {
