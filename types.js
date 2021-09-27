@@ -71,12 +71,13 @@ type orderer = {
 
 
 type radio = {
-  choices: ({
+  choices: {
     clue?: string,
     content?: string,
     correct?: boolean,
     isNoneOfTheAbove?: boolean,
-  } | PerseusContent)[],
+    widgets?: PerseusWidgets,
+  }[],
   countChoices?: boolean,
   deselectEnabled?: boolean,
   displayCount?: number,
@@ -142,7 +143,17 @@ type grapher = {
 };
 
 
-type graded_group = PerseusContent;
+type graded_group = {
+  content: string,
+  hint?: {
+    content: string,
+    images: PerseusImages,
+    widgets: PerseusWidgets,
+  },
+  images: PerseusImages,
+  title?: "QUESTION 1" | "" | "Problem 4" | "Problem 3",
+  widgets: PerseusWidgets,
+};
 
 
 type table = {
@@ -287,7 +298,12 @@ type transformer = {
 };
 
 
-type group = PerseusContent;
+type group = {
+  content: string,
+  images: PerseusImages,
+  metadata?: string[],
+  widgets: PerseusWidgets,
+};
 
 
 type matrix = {
@@ -372,54 +388,16 @@ type explanation = {
   hidePrompt: string,
   showPrompt: string,
   static?: boolean,
-  widgets?: {
-    "image 1"?: {
-      type: "image",
-      alignment: "block",
-      graded: boolean,
-      id?: "image 1",
-      options: {
-        alt: string,
-        backgroundImage: {
-          height: number,
-          url: string,
-          width: number,
-        },
-        box: [number, number],
-        caption: string,
-        labels: empty[],
-        range: [[number, number], [number, number]],
-        static: boolean,
-        title: "",
-      },
-      static: boolean,
-      version: {
-        major: number,
-        minor: number,
-      },
-    },
-    "radio 1"?: {
-      type: "radio",
-      options: {
-        choices: [{}, {}],
-        countChoices: boolean,
-        deselectEnabled: boolean,
-        displayCount: null,
-        hasNoneOfTheAbove: boolean,
-        multipleSelect: boolean,
-        randomize: boolean,
-      },
-      version: {
-        major: number,
-        minor: number,
-      },
-    },
-  },
+  widgets?: PerseusWidgets,
 };
 
 
 type sequence = {
-  json: PerseusContent[]
+  json: {
+    content: string,
+    images: PerseusImages,
+    widgets: PerseusWidgets,
+  }[]
 };
 
 

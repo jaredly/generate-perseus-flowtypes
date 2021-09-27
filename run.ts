@@ -40,7 +40,8 @@ type Type =
     | { type: 'number' }
     | { type: 'boolean' }
     | { type: 'empty-array' }
-    | { type: 'perseus-content' }
+    | { type: 'perseus-widgets' }
+    | { type: 'perseus-images' }
     | Nullable
     | Tuple
     | ArrayT
@@ -59,8 +60,10 @@ const flowTypeFromType = (t: Type): bt.FlowType => {
             return bt.stringTypeAnnotation();
         case 'nullable':
             return bt.nullableTypeAnnotation(flowTypeFromType(t.inner));
-        case 'perseus-content':
-            return bt.genericTypeAnnotation(bt.identifier('PerseusContent'));
+        case 'perseus-images':
+            return bt.genericTypeAnnotation(bt.identifier('PerseusImages'));
+        case 'perseus-widgets':
+            return bt.genericTypeAnnotation(bt.identifier('PerseusWidgets'));
         case 'literal':
             return bt.stringLiteralTypeAnnotation(t.value);
         case 'tuple':
@@ -154,7 +157,8 @@ const typeDistance = (one: Type, two: Type): number => {
         case 'string':
         case 'boolean':
         case 'empty-array':
-        case 'perseus-content':
+        case 'perseus-widgets':
+        case 'perseus-images':
             return 0;
         case 'tuple': {
             const tw = two as Tuple;
@@ -306,21 +310,15 @@ const mergers: Array<(one: Type, two: Type) => Type | null> = [
                 }
             });
         }
-        if (true) {
-            // TODO: null shouldn't be counted, it should just make things nullable
-            // TODO: how to know if different types should be distinct? Maybe if
-            // ALL attributes are shared, we say type can be a union. Otherwise assume
-            // it's a tagged union.
-            if (best != null) {
-                const unified = unify(best[1], two);
-                if (unified.type !== 'union') {
-                    return {
-                        ...one,
-                        options: one.options.map((type) =>
-                            type === best![1] ? unified : type,
-                        ),
-                    };
-                }
+        if (best != null) {
+            const unified = unify(best[1], two);
+            if (unified.type !== 'union') {
+                return {
+                    ...one,
+                    options: one.options.map((type) =>
+                        type === best![1] ? unified : type,
+                    ),
+                };
             }
         }
         // TODO: I might want to go through the union to find the type that is "most similar"
@@ -356,7 +354,8 @@ const unify = (one: Type, two: Type): Type => {
         case 'number':
         case 'boolean':
         case 'empty-array':
-        case 'perseus-content':
+        case 'perseus-widgets':
+        case 'perseus-images':
             return one;
         case 'nullable':
             return {
@@ -531,17 +530,22 @@ const typeFromValue = (value: unknown): Type => {
         };
     }
     if (typeof value === 'object' && value) {
-        if (
-            typeof value.content === 'string' &&
-            typeof value.widgets === 'object'
-        ) {
-            return { type: 'perseus-content' };
-        }
+        // if (
+        //     typeof value.content === 'string' &&
+        //     typeof value.widgets === 'object'
+        // ) {
+        //     // return { type: 'perseus-widgets' };
+        // }
         let elType: Type | null | false = null;
         const attributes: { [key: string]: Type } = {};
         const v = value as { [key: string]: unknown };
         Object.keys(value).forEach((k) => {
-            const t = typeFromValue(v[k]);
+            const t =
+                k === 'widgets'
+                    ? maybeWidgets(v[k])
+                    : k === 'images'
+                    ? maybeImages(v[k])
+                    : typeFromValue(v[k]);
             attributes[k] = t;
             if (elType === null) {
                 elType = t;
@@ -563,6 +567,43 @@ const typeFromValue = (value: unknown): Type => {
     }
     console.log(value);
     throw new Error(`not handled`);
+};
+
+const maybeImages = (value: unknown): Type => {
+    if (
+        typeof value === 'object' &&
+        value &&
+        Object.keys(value).every((kk) => {
+            const v = value as any;
+            return (
+                typeof v[kk] === 'object' &&
+                v[kk] &&
+                typeof v[kk].height === 'number' &&
+                typeof v[kk].width === 'number'
+            );
+        })
+    ) {
+        return { type: 'perseus-images' };
+    }
+    return typeFromValue(value);
+};
+
+const maybeWidgets = (value: unknown): Type => {
+    if (
+        typeof value === 'object' &&
+        value &&
+        Object.keys(value).every((kk) => {
+            const v = value as any;
+            return (
+                typeof v[kk] === 'object' &&
+                v[kk] &&
+                typeof v[kk].type === 'string'
+            );
+        })
+    ) {
+        return { type: 'perseus-widgets' };
+    }
+    return typeFromValue(value);
 };
 
 const output: Array<bt.TypeAlias> = [];
