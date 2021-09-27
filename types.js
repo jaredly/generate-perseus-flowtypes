@@ -1,112 +1,131 @@
 type categorizer = {
-  items: string[],
-  values: (?number)[],
-  randomizeItems: ?boolean,
   categories: string[],
-  static: ?boolean,
-  highlightLint: ?boolean,
-  linterContext: ?{
-    paths: empty[],
-    highlightLint: boolean,
+  highlightLint?: boolean,
+  items: string[],
+  linterContext?: {
     contentType: "",
+    highlightLint: boolean,
+    paths: empty[],
     stack: empty[],
   },
+  randomizeItems?: boolean,
+  static?: boolean,
+  values: (?number)[],
 };
 
 
 type simulator = {
-  xAxisLabel: "Proportion (%)",
-  proportionOrPercentage: "percentage" | "proportion",
-  yAxisLabel: string,
   numTrials: number,
   proportionLabel: string,
+  proportionOrPercentage: "percentage" | "proportion",
+  xAxisLabel: "Proportion (%)",
+  yAxisLabel: string,
 };
 
 
 type image = {
+  alt: string,
+  backgroundImage: {
+    height: number,
+    url?: string,
+    width: number,
+  },
   box: [number, number],
-  title: string,
+  caption: string,
   labels: empty[] | [{
+    alignment: "center",
     content: "",
     coordinates: [number, number],
-    alignment: "center",
   }],
-  caption: string,
   range: [[number, number], [number, number]],
-  backgroundImage: {
-    url: ?string,
-    width: number,
-    height: number,
-  },
-  static: ?boolean,
-  alt: string,
+  static?: boolean,
+  title: string,
 };
 
 
 type orderer = {
-  otherOptions: {
-    content: string
-  }[],
-  layout: "vertical" | "horizontal",
-  options: ?{
-    content: string
-  }[],
   correctOptions: {
     content: string
   }[],
   height: "normal" | "auto",
+  layout: "vertical" | "horizontal",
+  options?: {
+    content: string
+  }[],
+  otherOptions: {
+    content: string
+  }[],
 };
 
 
 type radio = {
-  displayCount: null,
   choices: {
+    clue?: string,
     content: string,
-    isNoneOfTheAbove: ?boolean,
-    clue: ?string,
-    correct: ?boolean,
+    correct?: boolean,
+    isNoneOfTheAbove?: boolean,
   }[],
-  countChoices: ?boolean,
-  hasNoneOfTheAbove: ?boolean,
-  multipleSelect: boolean,
-  randomize: boolean,
+  countChoices?: boolean,
   deselectEnabled: boolean,
-  onePerLine: ?boolean,
-  noneOfTheAbove: ?boolean,
+  displayCount: null,
+  hasNoneOfTheAbove?: boolean,
+  multipleSelect: boolean,
+  noneOfTheAbove?: boolean,
+  onePerLine?: boolean,
+  randomize: boolean,
 };
 
 
 type grapher = {
-  graph: {
-    rulerTicks: number,
-    labels: ["x" | "\\text{Boats}" | "", "y" | "\\text{Cars}" | "f(x)" | ""],
-    range: [[number, number], [number, number]],
-    step: [number, number],
-    valid: ?boolean,
-    markings: "graph" | "none" | "grid",
-    backgroundImage: {
-      url: ?string,
-      width: ?number,
-      height: ?number,
-      scale: ?number,
-      bottom: ?number,
-      left: ?number,
-    },
-    rulerLabel: "",
-    snapStep: ?[number, number],
-    editableSettings: ?("snap" | "graph" | "image" | "measure")[],
-    gridStep: ?[number, number],
-    showRuler: ?boolean,
-    showProtractor: ?boolean,
-    showTooltips: ?boolean,
-    box: ?[number, number],
-  },
-  correct: {
-    asymptote: ?[[number, number], [number, number]],
-    coords: ?[[number, number], [number, number]],
-    type: "logarithm" | "linear" | "exponential" | "quadratic" | "sinusoid" | "absolute_value",
-  },
   availableTypes: ("absolute_value" | "linear" | "quadratic" | "exponential" | "logarithm" | "sinusoid")[],
+  correct: {
+    type: "logarithm",
+    asymptote: [[number, number], [number, number]],
+    coords: [[number, number], [number, number]],
+  } | {
+    type: "linear",
+    asymptote: null,
+    coords?: [[number, number], [number, number]],
+  } | {
+    type: "exponential",
+    asymptote: [[number, number], [number, number]],
+    coords: [[number, number], [number, number]],
+  } | {
+    type: "quadratic",
+    asymptote: null,
+    coords: [[number, number], [number, number]],
+  } | {
+    type: "sinusoid",
+    asymptote: null,
+    coords: [[number, number], [number, number]],
+  } | {
+    type: "absolute_value",
+    coords: [[number, number], [number, number]],
+  },
+  graph: {
+    backgroundImage: {
+      bottom?: number,
+      height?: number,
+      left?: number,
+      scale?: number,
+      url?: string,
+      width?: number,
+    },
+    box?: [number, number],
+    editableSettings?: ("snap" | "graph" | "image" | "measure")[],
+    gridStep?: [number, number],
+    labels: ["x" | "\\text{Boats}" | "", "y" | "\\text{Cars}" | "f(x)" | ""],
+    markings: "graph" | "none" | "grid",
+    range: [[number, number], [number, number]],
+    rulerLabel: "",
+    rulerTicks: number,
+    showProtractor?: boolean,
+    showRuler?: boolean,
+    showTooltips?: boolean,
+    snapStep?: [number, number],
+    step: [number, number],
+    valid?: boolean,
+  },
 };
 
 
@@ -114,95 +133,32 @@ type graded_group = PerseusContent;
 
 
 type table = {
+  answers: string[][],
+  columns: number,
   headers: ("" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$")[],
   rows: number,
-  columns: number,
-  answers: string[][],
 };
 
 
 type label_image = {
-  imageAlt: string,
-  imageUrl: string,
-  markers: {
-    y: number,
-    x: number,
-    answers: string[],
-    label: string,
-  }[],
   choices: string[],
   hideChoicesFromInstructions: boolean,
-  static: boolean,
+  imageAlt: string,
   imageHeight: number,
+  imageUrl: string,
   imageWidth: number,
+  markers: {
+    answers: string[],
+    label: string,
+    x: number,
+    y: number,
+  }[],
   multipleAnswers: boolean,
+  static: boolean,
 };
 
 
 type transformer = {
-  graphMode: "dynamic" | "interactive",
-  gradeEmpty: boolean,
-  graph: {
-    rulerTicks: number,
-    showProtractor: boolean,
-    snapStep: [number, number],
-    labels: ["x", "y"],
-    range: [[number, number], [number, number]],
-    gridStep: [number, number],
-    markings: "none" | "graph" | "grid",
-    step: [number, number],
-    showRuler: boolean,
-    backgroundImage: {
-      scale: ?number,
-      bottom: ?number,
-      url: ?string,
-      height: ?number,
-      width: ?number,
-      left: ?number,
-    },
-    rulerLabel: "",
-  },
-  starting: {
-    shape: {
-      type: ["polygon-5" | "polygon-3" | "polygon-4"] | "polygon-3" | ["polygon-3"] | ["lineSegment", "lineSegment"] | ["polygon-5"] | ["polygon-4"] | ["polygon-6"],
-      coords: [number, number][],
-      options: ?{}[],
-    },
-    transformations: empty[],
-  },
-  listMode: "interactive" | "dynamic",
-  version: number,
-  tools: {
-    translation: {
-      enabled: boolean,
-      constraints: {},
-      required: ?boolean,
-    },
-    rotation: {
-      enabled: boolean,
-      coord: [number, number],
-      constraints: {
-        fixed: boolean
-      },
-      required: ?boolean,
-    },
-    dilation: {
-      enabled: boolean,
-      coord: [number, number],
-      constraints: {
-        fixed: boolean
-      },
-      required: ?boolean,
-    },
-    reflection: {
-      enabled: boolean,
-      coords: [[number, number], [number, number]],
-      constraints: {
-        fixed: boolean
-      },
-      required: ?boolean,
-    },
-  },
   correct: {
     shape: {
       type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6")[],
@@ -211,21 +167,91 @@ type transformer = {
     },
     transformations: ({
       type: "rotation",
-      center: [number, number],
       angleDeg: number,
+      center: [number, number],
     } | {
-      line: [[number, number], [number, number]],
       type: "reflection",
+      line: [[number, number], [number, number]],
     } | {
-      vector: [number, number],
       type: "translation",
+      vector: [number, number],
     } | {
-      scale: number,
       type: "dilation",
       center: [number, number],
+      scale: number,
     })[],
   },
   drawSolutionShape: boolean,
+  gradeEmpty: boolean,
+  graph: {
+    backgroundImage: {
+      bottom?: number,
+      height?: number,
+      left?: number,
+      scale?: number,
+      url?: string,
+      width?: number,
+    },
+    gridStep: [number, number],
+    labels: ["x", "y"],
+    markings: "none" | "graph" | "grid",
+    range: [[number, number], [number, number]],
+    rulerLabel: "",
+    rulerTicks: number,
+    showProtractor: boolean,
+    showRuler: boolean,
+    snapStep: [number, number],
+    step: [number, number],
+  },
+  graphMode: "dynamic" | "interactive",
+  listMode: "interactive" | "dynamic",
+  starting: {
+    shape: {
+      type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6")[],
+      coords: [number, number][],
+      options?: {}[],
+    } | {
+      type: "polygon-3",
+      coords: [[number, number], [number, number], [number, number]],
+    } | {
+      type: ["polygon-3"],
+      coords: [[number, number], [number, number], [number, number]],
+      options: [{}],
+    },
+    transformations: empty[],
+  },
+  tools: {
+    dilation: {
+      constraints: {
+        fixed: boolean
+      },
+      coord: [number, number],
+      enabled: boolean,
+      required?: boolean,
+    },
+    reflection: {
+      constraints: {
+        fixed: boolean
+      },
+      coords: [[number, number], [number, number]],
+      enabled: boolean,
+      required?: boolean,
+    },
+    rotation: {
+      constraints: {
+        fixed: boolean
+      },
+      coord: [number, number],
+      enabled: boolean,
+      required?: boolean,
+    },
+    translation: {
+      constraints: {},
+      enabled: boolean,
+      required?: boolean,
+    },
+  },
+  version: number,
 };
 
 
@@ -233,110 +259,110 @@ type group = PerseusContent;
 
 
 type matrix = {
-  cursorPosition: [number, number],
-  suffix: "",
   answers: (?number)[][],
-  prefix: string,
-  static: ?boolean,
+  cursorPosition: [number, number],
   matrixBoardSize: [number, number],
+  prefix: string,
+  static?: boolean,
+  suffix: "",
 };
 
 
 type passage_ref = {
   passageNumber: number,
   referenceNumber: number,
-  static: ?boolean,
-  summaryText: ?"",
+  static?: boolean,
+  summaryText?: "",
 };
 
 
 type passage = {
-  passageTitle: "" | "Passage A" | "Passage B" | "Dark Snow",
   footnotes: "",
-  static: boolean,
   passageText: string,
+  passageTitle: "" | "Passage A" | "Passage B" | "Dark Snow",
   showLineNumbers: boolean,
+  static: boolean,
 };
 
 
 type input_number = {
-  maxError: number | "0.1" | "1" | "0.01" | "0.04",
-  inexact: boolean,
-  value: "0.5" | "38" | number | "0" | "2" | "1" | "69000" | "5200" | "5027",
-  simplify: "required",
   answerType: "number",
+  inexact: boolean,
+  maxError: number | "0.1" | "1" | "0.01" | "0.04",
+  rightAlign?: boolean,
+  simplify: "required",
   size: "normal" | "small",
-  rightAlign: ?boolean,
+  value: "0.5" | "38" | number | "0" | "2" | "1" | "69000" | "5200" | "5027",
 };
 
 
 type measurer = {
   box: [number, number],
+  image: {
+    left?: number,
+    top?: number,
+    url?: string,
+  },
+  rulerLabel: "" | "m" | "cm",
+  rulerLength: number,
+  rulerPixels: number,
   rulerTicks: number,
   showProtractor: boolean,
-  image: {
-    url: ?string,
-    top: ?number,
-    left: ?number,
-  },
-  rulerPixels: number,
-  rulerLength: number,
   showRuler: boolean,
-  rulerLabel: "" | "m" | "cm",
-  static: ?boolean,
+  static?: boolean,
 };
 
 
 type dropdown = {
-  static: ?boolean,
-  placeholder: string,
   choices: {
     content: string,
     correct: boolean,
   }[],
+  placeholder: string,
+  static?: boolean,
 };
 
 
 type matcher = {
-  padding: boolean,
-  orderMatters: boolean,
   labels: [string, string],
-  right: string[],
   left: string[],
+  orderMatters: boolean,
+  padding: boolean,
+  right: string[],
 };
 
 
 type explanation = {
+  explanation: string,
   hidePrompt: "Hide explanation" | "Hide explanation " | "Got it, thanks!" | "Hide diagram." | "Hide reference" | "Hide footnote",
-  widgets: ?{
-    "image 1": ?{
+  showPrompt: string,
+  static?: boolean,
+  widgets?: {
+    "image 1"?: {
+      type: "image",
+      alignment: "block",
       graded: boolean,
+      options: {
+        alt: string,
+        backgroundImage: {
+          height: number,
+          url: string,
+          width: number,
+        },
+        box: [number, number],
+        caption: "",
+        labels: empty[],
+        range: [[number, number], [number, number]],
+        static: boolean,
+        title: "",
+      },
+      static: boolean,
       version: {
         major: number,
         minor: number,
       },
-      static: boolean,
-      type: "image",
-      options: {
-        box: [number, number],
-        title: "",
-        labels: empty[],
-        caption: "",
-        range: [[number, number], [number, number]],
-        backgroundImage: {
-          url: string,
-          width: number,
-          height: number,
-        },
-        static: boolean,
-        alt: string,
-      },
-      alignment: "block",
     }
   },
-  explanation: string,
-  static: ?boolean,
-  showPrompt: string,
 };
 
 
@@ -346,28 +372,28 @@ type sequence = {
 
 
 type sorter = {
-  padding: boolean,
-  layout: "horizontal" | "vertical",
   correct: string[],
+  layout: "horizontal" | "vertical",
+  padding: boolean,
 };
 
 
 type number_line = {
-  labelRange: [?number, ?number],
-  tickStep: ?number,
-  labelStyle: "decimal" | "improper" | "non-reduced",
-  range: [number, number],
-  numDivisions: ?number,
-  snapDivisions: number,
-  labelTicks: boolean,
-  initialX: ?number,
   correctRel: "eq" | "gt" | "le" | "lt" | "ge",
-  static: ?boolean,
+  correctX?: number,
   divisionRange: [number, number],
-  correctX: ?number,
-  isInequality: ?boolean,
-  showTooltips: ?boolean,
-  isTickCtrl: ?boolean,
+  initialX?: number,
+  isInequality?: boolean,
+  isTickCtrl?: boolean,
+  labelRange: [?number, ?number],
+  labelStyle: "decimal" | "improper" | "non-reduced",
+  labelTicks: boolean,
+  numDivisions?: number,
+  range: [number, number],
+  showTooltips?: boolean,
+  snapDivisions: number,
+  static?: boolean,
+  tickStep?: number,
 };
 
 
@@ -377,16 +403,16 @@ type graded_group_set = {
 
 
 type cs_program = {
+  height: number,
+  programID: "5735507881820160" | "6729568946552832" | "" | "5900231381221376" | "5241695823331328",
   settings: {
     name: "question" | "" | "probHeads",
     value: string,
   }[],
-  height: number,
-  width: number,
-  programID: "5735507881820160" | "6729568946552832" | "" | "5900231381221376" | "5241695823331328",
-  static: ?boolean,
   showButtons: boolean,
   showEditor: boolean,
+  static?: boolean,
+  width: number,
 };
 
 
@@ -397,259 +423,255 @@ type passage_ref_target = {
 
 
 type numeric_input = {
-  coefficient: boolean,
-  labelText: ?string,
-  rightAlign: ?boolean,
   answers: {
+    answerForms?: ("proper" | "improper" | "mixed" | "decimal" | "integer" | "pi")[],
+    maxError?: number,
+    message: string,
+    simplify: "required" | "optional" | boolean,
     status: "correct" | "wrong",
-    maxError: ?number,
     strict: boolean,
     value: number,
-    simplify: "required" | "optional" | boolean,
-    message: string,
-    answerForms: ?("proper" | "improper" | "mixed" | "decimal" | "integer" | "pi")[],
   }[],
-  static: ?boolean,
-  multipleNumberInput: ?boolean,
+  coefficient: boolean,
+  labelText?: string,
+  multipleNumberInput?: boolean,
+  rightAlign?: boolean,
   size: "normal" | "small",
+  static?: boolean,
 };
 
 
 type definition = {
   definition: string,
-  togglePrompt: string,
   static: boolean,
+  togglePrompt: string,
 };
 
 
 type interaction = {
-  graph: {
-    box: [number, number],
-    tickStep: [number, number],
-    labels: ["x" | "\\text{Re}", "y" | "\\text{Im}"],
-    gridStep: [number, number],
-    range: [[number, number], [number, number]],
-    markings: "graph" | "none" | "grid",
-    rulerTicks: ?number,
-    snapStep: ?[number, number],
-    editableSettings: ?["canvas", "graph"],
-    backgroundImage: ?{
-      url: null,
-      width: ?number,
-      height: ?number,
-      scale: ?number,
-      bottom: ?number,
-      left: ?number,
-    },
-    valid: ?boolean,
-    showRuler: ?boolean,
-    showProtractor: ?boolean,
-    showTooltips: ?boolean,
-    rulerLabel: ?"",
-  },
   elements: {
     type: "label" | "point" | "line" | "movable-point" | "rectangle" | "parametric" | "function",
-    options: {
-      color: ?("#6495ED" | "#FF00AF" | "black" | "#9AB8ED" | "#9BEDCE" | "#9D38BD" | "#28AE7B" | null | "#EDD19B"),
-      coordX: ?string,
-      coordY: ?string,
-      label: ?string,
-      strokeDasharray: ?("." | "" | null),
-      startX: ?string,
-      startY: ?string,
-      endY: ?string,
-      endX: ?string,
-      arrows: ?("->" | ""),
-      strokeWidth: ?number,
-      constraintFn: ?("0" | "-9" | "3" | "-4" | "0.5"),
-      constraintYMin: ?("6" | "-10" | "3" | "-4" | "0"),
-      constraintXMax: ?("4.5" | "10" | "3" | "9" | "8" | "6" | "0"),
-      varSubscript: ?number,
-      constraint: ?("snap" | "y" | "none"),
-      constraintXMin: ?("0" | "5.5" | "-10" | "3" | "5" | "1.5" | "2"),
-      snap: ?number,
-      constraintYMax: ?("6" | "10" | "3" | "-4" | "0"),
-      width: ?string,
-      height: ?string,
-      rangeMin: ?("0" | "6" | "-7"),
-      y: ?"2+\\sin(t)",
-      x: ?"-2+\\cos(t)",
-      rangeMax: ?("6" | "9" | "2\\pi" | "10"),
-      value: ?string,
-      funcName: ?("f" | "g"),
-    },
     key: string,
+    options: {
+      arrows?: "->" | "",
+      color?: "#6495ED" | "#FF00AF" | "black" | "#9AB8ED" | "#9BEDCE" | "#9D38BD" | "#28AE7B" | "#EDD19B",
+      constraint?: "snap" | "y" | "none",
+      constraintFn?: "0" | "-9" | "3" | "-4" | "0.5",
+      constraintXMax?: "4.5" | "10" | "3" | "9" | "8" | "6" | "0",
+      constraintXMin?: "0" | "5.5" | "-10" | "3" | "5" | "1.5" | "2",
+      constraintYMax?: "6" | "10" | "3" | "-4" | "0",
+      constraintYMin?: "6" | "-10" | "3" | "-4" | "0",
+      coordX?: string,
+      coordY?: string,
+      endX?: string,
+      endY?: string,
+      funcName?: "f" | "g",
+      height?: string,
+      label?: string,
+      rangeMax?: "6" | "9" | "2\\pi" | "10",
+      rangeMin?: "0" | "6" | "-7",
+      snap?: number,
+      startX?: string,
+      startY?: string,
+      strokeDasharray?: "." | "",
+      strokeWidth?: number,
+      value?: string,
+      varSubscript?: number,
+      width?: string,
+      x?: "-2+\\cos(t)",
+      y?: "2+\\sin(t)",
+    },
   }[],
-  static: ?boolean,
+  graph: {
+    backgroundImage?: {
+      bottom?: number,
+      height?: number,
+      left?: number,
+      scale?: number,
+      url: null,
+      width?: number,
+    },
+    box: [number, number],
+    editableSettings?: ["canvas", "graph"],
+    gridStep: [number, number],
+    labels: ["x" | "\\text{Re}", "y" | "\\text{Im}"],
+    markings: "graph" | "none" | "grid",
+    range: [[number, number], [number, number]],
+    rulerLabel?: "",
+    rulerTicks?: number,
+    showProtractor?: boolean,
+    showRuler?: boolean,
+    showTooltips?: boolean,
+    snapStep?: [number, number],
+    tickStep: [number, number],
+    valid?: boolean,
+  },
+  static?: boolean,
 };
 
 
 type plotter = {
-  maxY: number,
-  type: "pic" | "bar" | "dotplot" | "line" | "histogram",
-  labels: [string, string],
-  scaleY: number,
-  labelInterval: ?number,
-  categories: string[],
-  starting: number[],
+  type: "pic",
+  categories: ("Rolly" | "Tumbler" | "Topple" | "Twisty" | "Gymbo" | "Rose" | "Daffodil" | "Tulip")[],
   correct: number[],
+  labelInterval: number,
+  labels: ["Type of flower" | "Monkey", "Number of flowers" | "Number of flips"],
+  maxY: number,
+  picUrl: string,
+  scaleY: number,
   snapsPerLine: number,
-  picUrl: ?string,
-  picSize: ?number,
-  plotDimensions: ?[number, number],
-  picBoxHeight: ?number,
+  starting: number[],
+} | {
+  type: "bar",
+  categories: string[],
+  correct: number[],
+  labelInterval: number,
+  labels: [string, string],
+  maxY: number,
+  picBoxHeight?: number,
+  picSize?: number,
+  picUrl?: string,
+  plotDimensions?: [number, number],
+  scaleY: number,
+  snapsPerLine: number,
+  starting: number[],
+} | {
+  type: "dotplot",
+  categories: string[],
+  correct: number[],
+  labelInterval: number,
+  labels: [string, ""],
+  maxY: number,
+  scaleY: number,
+  snapsPerLine: number,
+  starting: number[],
+} | {
+  type: "line",
+  categories: ("$2$" | "$1$" | "$3$" | "$4$" | "$5$" | "$>5$" | "$>0$" | "$>10$" | "$>15$" | "$<4$" | "$<2$" | "$<6$" | "$<8$" | "$>30$" | "$>45$")[],
+  correct: number[],
+  labelInterval: number,
+  labels: ["Number of pictures" | "number of books" | "family size" | "Time (in seconds)", string],
+  maxY: number,
+  scaleY: number,
+  snapsPerLine: number,
+  starting: number[],
+} | {
+  type: "histogram",
+  categories: ("$100$" | "$0$" | "$200$" | "$300$" | "$25$" | "$50$" | "$75$" | "$5$" | "$10$" | "$15$" | "$20$" | "$3$" | "$6$" | "$9$" | "$12$")[],
+  correct: number[],
+  labelInterval: null,
+  labels: [string, string],
+  maxY: number,
+  scaleY: number,
+  snapsPerLine: number,
+  starting: number[],
 };
 
 
 type interactive_graph = {
-  rulerTicks: ?number,
-  showProtractor: boolean,
-  graph: {
-    type: "point",
-    numPoints: number | "unlimited",
-  } | {
-    type: "linear"
-  } | {
-    type: "point",
-    numPoints: number,
-  } | {
-    numSegments: number,
-    type: "segment",
-  } | {
-    numSides: number,
-    type: "polygon",
-  } | {
-    type: "linear-system"
-  } | {
-    type: "segment"
-  } | {
-    type: "point",
-    numPoints: "unlimited",
-  } | {
-    type: "polygon"
-  } | {
-    type: "point"
-  } | {
-    numSides: number,
-    showSides: boolean,
-    type: "polygon",
-    showAngles: boolean,
-    snapTo: "grid",
-  },
-  snapStep: ?[number, number],
-  labels: ?["x" | "$\\text{Age}$", "y" | "$\\text{Sleep}$"],
-  step: [number, number],
-  gridStep: ?[number, number],
   backgroundImage: {
-    url: ?string,
-    scale: number | "1" | null,
-    bottom: ?(number | ""),
-    left: ?(number | ""),
-    height: ?number,
-    width: ?number,
+    bottom?: number | "",
+    height?: number,
+    left?: number | "",
+    scale?: number | "1",
+    url?: string,
+    width?: number,
   },
-  range: [[number, number], [number, number]],
-  showRuler: ?boolean,
-  markings: "graph" | "none",
-  showTooltips: ?boolean,
-  rulerLabel: ?"",
   correct: {
-    coords: [number | [number, number], number | [number, number]][],
-    numPoints: number | "unlimited" | null,
-    type: "point" | "linear" | "segment" | "polygon" | "linear-system",
-    numSegments: ?number,
-    numSides: ?number,
-    snapTo: ?"grid",
-    showSides: ?boolean,
-    showAngles: ?boolean,
-    match: ?"congruent",
-  } | {
-    type: "point"
-  } | {
-    coords: [number, number][],
-    numPoints: "unlimited",
     type: "point",
-  } | {
-    coords: [[number, number]],
-    numPoints: number,
-    type: "point",
+    coords?: [number, number][],
+    numPoints?: number | "unlimited",
   } | {
     type: "linear",
     coords: [[number, number], [number, number]],
   } | {
-    type: "point",
-    coords: [[number, number]],
-  } | {
-    numSegments: number,
-    coords: [[[number, number], [number, number]], [[number, number], [number, number]]],
     type: "segment",
+    coords: [[number, number], [number, number]][],
+    numSegments?: number,
   } | {
     type: "polygon",
-    coords: [[number, number], [number, number], [number, number]],
-  } | {
-    coords: null,
-    numPoints: number,
-    type: "point",
-  } | {
-    type: "segment",
-    coords: [[[number, number], [number, number]]],
-  } | {
-    coords: [[number, number], [number, number]],
-    numPoints: number,
-    type: "point",
-  } | {
-    numSides: number,
-    snapTo: "grid",
     coords: [number, number][],
-    showSides: boolean,
-    type: "polygon",
-    showAngles: boolean,
-    match: "congruent",
+    match?: "congruent",
+    numSides?: number,
+    showAngles?: boolean,
+    showSides?: boolean,
+    snapTo?: "grid",
+  } | {
+    type: "linear-system",
+    coords: [[[number, number], [number, number]], [[number, number], [number, number]]],
   },
+  graph: {
+    type: "point",
+    numPoints?: number | "unlimited",
+  } | {
+    type: "linear"
+  } | {
+    type: "segment",
+    numSegments?: number,
+  } | {
+    type: "polygon",
+    numSides?: number,
+    showAngles?: boolean,
+    showSides?: boolean,
+    snapTo?: "grid",
+  } | {
+    type: "linear-system"
+  },
+  gridStep?: [number, number],
+  labels?: ["x" | "$\\text{Age}$", "y" | "$\\text{Sleep}$"],
+  markings: "graph" | "none",
+  range: [[number, number], [number, number]],
+  rulerLabel?: "",
+  rulerTicks?: number,
+  showProtractor: boolean,
+  showRuler?: boolean,
+  showTooltips?: boolean,
+  snapStep?: [number, number],
+  step: [number, number],
 };
 
 
 type iframe = {
+  allowFullScreen: boolean,
+  allowTopNavigation?: boolean,
+  height: "420" | "405" | "410" | "400" | "300" | "200" | "" | "340" | "500" | "440" | number,
   settings: {
     name: string,
     value: string,
   }[],
+  static?: boolean,
   url: string,
-  height: "420" | "405" | "410" | "400" | "300" | "200" | "" | "340" | "500" | "440" | number,
   width: "840" | "425" | "440" | "410" | "420" | "400" | "" | "405" | number | "800",
-  allowFullScreen: boolean,
-  static: ?boolean,
-  allowTopNavigation: ?boolean,
 };
 
 
 type lights_puzzle = {
-  startCells: boolean[][],
-  flipPattern: "x" | "plus" | null,
-  static: ?boolean,
+  flipPattern?: "x" | "plus",
   gradeIncompleteAsWrong: boolean,
+  startCells: boolean[][],
+  static?: boolean,
 };
 
 
 type video = {
   location: string,
-  static: ?boolean,
+  static?: boolean,
 };
 
 
 type expression = {
-  functions: ["f" | "A", "g" | "L", "h" | "W"],
-  answerForms: ?{
+  answerForms?: {
     considered: "correct" | "wrong",
+    form?: boolean,
+    key?: number | "1" | "2" | "0",
     simplify: boolean,
     value: string,
-    form: ?boolean,
-    key: ?(number | "1" | "2" | "0"),
   }[],
-  buttonSets: ?("basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms")[],
+  buttonSets?: ("basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms")[],
+  buttonsVisible?: "never",
+  form?: boolean,
+  functions: ["f" | "A", "g" | "L", "h" | "W"],
+  simplify?: boolean,
   times: boolean,
-  form: ?boolean,
-  value: ?string,
-  simplify: ?boolean,
-  buttonsVisible: ?"never",
+  value?: string,
 };

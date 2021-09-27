@@ -84,78 +84,131 @@ const flowTypeFromType = (t: Type): bt.FlowType => {
             );
         case 'object':
             return bt.objectTypeAnnotation(
-                Object.keys(t.attributes).map((k) =>
-                    bt.objectTypeProperty(
-                        k.match(/[-+\/\s]/g)
+                Object.keys(t.attributes)
+                    .sort((a, b) => {
+                        if (a === 'type') {
+                            return -1;
+                        }
+                        if (b === 'type') {
+                            return 1;
+                        }
+
+                        return a > b ? 1 : -1;
+                    })
+                    .map((k) => {
+                        const id = k.match(/[-+\/\s]/g)
                             ? bt.stringLiteral(k)
-                            : bt.identifier(k),
-                        flowTypeFromType(t.attributes[k]),
-                    ),
-                ),
+                            : bt.identifier(k);
+                        const value = t.attributes[k];
+                        if (value.type === 'nullable') {
+                            return {
+                                ...bt.objectTypeProperty(
+                                    id,
+                                    flowTypeFromType(value.inner),
+                                ),
+                                optional: true,
+                            };
+                        }
+
+                        return bt.objectTypeProperty(
+                            id,
+                            flowTypeFromType(value),
+                        );
+                    }),
             );
     }
 };
 
 const typesEqual = (one: Type, two: Type): boolean => {
+    return typeDistance(one, two) === 0;
+};
+
+const typeDistance = (one: Type, two: Type): number => {
     if (one.type !== two.type) {
-        return false;
+        if (one.type === 'string' && two.type === 'literal') {
+            return 100;
+        }
+        if (one.type === 'literal' && two.type === 'string') {
+            return 100;
+        }
+        if (one.type === 'nullable') {
+            return 100 + typeDistance(one.inner, two);
+        }
+        if (two.type === 'nullable') {
+            return 100 + typeDistance(two.inner, one);
+        }
+        // TODO: array and tuple?
+        return 10000;
     }
     switch (one.type) {
         case 'null':
         case 'number':
         case 'string':
         case 'boolean':
-            return true;
+        case 'empty-array':
+        case 'perseus-content':
+            return 0;
         case 'tuple': {
             const tw = two as Tuple;
-            return (
-                one.items.length === tw.items.length &&
-                one.items.every((item, i) => typesEqual(item, tw.items[i]))
+
+            if (one.items.length !== tw.items.length) {
+                return Math.abs(one.items.length - tw.items.length) * 100;
+            }
+            return one.items.reduce(
+                (total, item, i) =>
+                    total + (typesEqual(item, tw.items[i]) ? 0 : 1),
+                0,
             );
         }
         case 'array':
-            return typesEqual(one.item, (two as ArrayT).item);
+            return typeDistance(one.item, (two as ArrayT).item) / 2;
         case 'literal':
-            return one.value === (two as Literal).value;
+            return one.value === (two as Literal).value ? 0 : 100;
         case 'map':
-            return typesEqual(one.value, (two as MapT).value);
-        case 'empty-array':
-            return true;
+            return typeDistance(one.value, (two as MapT).value) / 2;
         case 'object': {
             two = two as Obj;
+            let dist = 0;
+            if (
+                one.attributes.type != null &&
+                one.attributes.type.type === 'literal' &&
+                two.attributes.type != null &&
+                two.attributes.type.type === 'literal'
+            ) {
+                if (!typesEqual(one.attributes.type, two.attributes.type)) {
+                    dist += 1000;
+                }
+            }
             for (let k of Object.keys(one.attributes)) {
-                if (
-                    !two.attributes[k] ||
-                    !typesEqual(one.attributes[k], two.attributes[k])
-                ) {
-                    return false;
+                if (!two.attributes[k]) {
+                    dist += 10;
+                } else if (!typesEqual(one.attributes[k], two.attributes[k])) {
+                    dist += 100;
                 }
             }
             for (let k of Object.keys(two.attributes)) {
                 if (!one.attributes[k]) {
-                    return false;
+                    dist += 10;
                 }
             }
-            return true;
+            return dist;
         }
-        case 'perseus-content':
-            return true;
         case 'nullable':
-            return typesEqual(one.inner, (two as Nullable).inner);
+            return typeDistance(one.inner, (two as Nullable).inner) / 2;
         case 'union': {
             const tw = two as Union;
-            return (
-                one.options.every((t) =>
-                    tw.options.some((o) => typesEqual(t, o)),
-                ) &&
+            return one.options.every((t) =>
+                tw.options.some((o) => typesEqual(t, o)),
+            ) &&
                 tw.options.every((t) =>
                     one.options.some((o) => typesEqual(t, o)),
                 )
-            );
+                ? 0
+                : 1000;
         }
         default:
             const _: never = one;
-            return false;
+            return Infinity;
     }
 };
 
@@ -211,36 +264,68 @@ const mergers: Array<(one: Type, two: Type) => Type | null> = [
                 ? one
                 : { type: 'nullable', inner: unify(one.inner, two) }
             : null,
+    (one: Type, two: Type) =>
+        one.type === 'null' ? { type: 'nullable', inner: two } : null,
     (one: Type, two: Type) => {
         if (one.type !== 'union') {
             return null;
         }
-        // if (
-        //     two.type === 'string' &&
-        //     one.options.every(
-        //         (t) =>
-        //             t.type === 'literal' ||
-        //             t.type === 'string' ||
-        //             t.type === 'null',
-        //     ) &&
-        //     (one.options.length > MAX_LITERAL_UNION || two.type === 'string')
-        // ) {
-        //     return two;
-        // }
         if (one.options.some((t) => typesEqual(t, two))) {
             return one;
         }
+        let best: [number, Type] | null = null;
+        if (
+            two.type === 'object' &&
+            two.attributes.type != null &&
+            two.attributes.type.type === 'literal'
+        ) {
+            const tname = two.attributes.type.value;
+            one.options.some((type) => {
+                if (
+                    type.type === 'object' &&
+                    type.attributes.type != null &&
+                    type.attributes.type.type === 'literal' &&
+                    type.attributes.type.value === tname
+                ) {
+                    best = [0, type];
+                }
+            });
+        } else {
+            one.options.forEach((type) => {
+                const dist = typeDistance(type, two);
+                if (best == null || best[0] > dist) {
+                    best = [dist, type];
+                }
+            });
+        }
+        if (true) {
+            // TODO: null shouldn't be counted, it should just make things nullable
+            // TODO: how to know if different types should be distinct? Maybe if
+            // ALL attributes are shared, we say type can be a union. Otherwise assume
+            // it's a tagged union.
+            if (best != null) {
+                const unified = unify(best[1], two);
+                if (unified.type !== 'union') {
+                    return {
+                        ...one,
+                        options: one.options.map((type) =>
+                            type === best![1] ? unified : type,
+                        ),
+                    };
+                }
+            }
+        }
         // TODO: I might want to go through the union to find the type that is "most similar"
         // to the new type.
-        return { ...one, options: one.options.concat(two) };
+        // START HERE: with type distance.
+        return { ...one, options: one.options.concat([two]) };
     },
-    (one: Type, two: Type) =>
-        one.type === 'null' ? { type: 'nullable', inner: two } : null,
 ];
 
 // NEXT UP: Got to infer tagged unions folks.
 // IF the only consistent attribute between two objects is `type`, then just treat them as distinct.
 
+// NOTE: this in partice is called by an accumulator, so the first argument will be more complex.
 const unify = (one: Type, two: Type): Type => {
     if (one.type !== two.type) {
         for (let merger of mergers) {
@@ -317,7 +402,13 @@ const unify = (one: Type, two: Type): Type => {
                 (name) => one.attributes[name] != null,
             );
             // Treat this as a tagged union
-            if (commonAttrs.length === 1 && commonAttrs[0] === 'type') {
+            if (
+                (commonAttrs.length !== Object.keys(one.attributes).length ||
+                    commonAttrs.length !== Object.keys(tw.attributes).length) &&
+                commonAttrs.includes('type') &&
+                (one.attributes.type as Literal).value !==
+                    (tw.attributes.type as Literal).value
+            ) {
                 return { type: 'union', options: [one, two] };
             }
             const result: { [key: string]: Type } = {};
