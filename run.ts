@@ -6,6 +6,8 @@ import generate from '@babel/generator';
 const data = JSON.parse(
     fs.readFileSync('../sqlite/widget_options.json', 'utf8'),
 );
+const outFile = process.argv[2];
+console.log(`Writing to ${outFile}`);
 
 type Literal = {
     type: 'literal';
@@ -403,8 +405,8 @@ const unify = (one: Type, two: Type): Type => {
             );
             // Treat this as a tagged union
             if (
-                (commonAttrs.length !== Object.keys(one.attributes).length ||
-                    commonAttrs.length !== Object.keys(tw.attributes).length) &&
+                // (commonAttrs.length !== Object.keys(one.attributes).length ||
+                //     commonAttrs.length !== Object.keys(tw.attributes).length) &&
                 commonAttrs.includes('type') &&
                 (one.attributes.type as Literal).value !==
                     (tw.attributes.type as Literal).value
@@ -431,6 +433,7 @@ const unify = (one: Type, two: Type): Type => {
         case 'union': {
             const result = one.options.slice();
             const tw = two as Union;
+            console.log('union to union', one.options, tw.options);
             tw.options.forEach((option) => {
                 if (result.some((v) => typesEqual(v, option))) {
                     return;
@@ -477,7 +480,7 @@ const typeFromValue = (value: unknown): Type => {
             if (elType === null) {
                 elType = t;
             } else {
-                elType = unify(t, elType);
+                elType = unify(elType, t);
             }
         });
         return {
@@ -525,27 +528,32 @@ const typeFromValue = (value: unknown): Type => {
 const output: Array<bt.TypeAlias> = [];
 
 Object.keys(data).some((type) => {
-    let t: Type | null = null;
+    let toplevelType: Type | null = null;
     data[type].slice(0, 40).forEach((item: unknown) => {
-        const tt = typeFromValue(item);
-        if (t == null) {
-            t = tt;
+        const instanceType = typeFromValue(item);
+        if (toplevelType == null) {
+            toplevelType = instanceType;
         } else {
-            t = unify(t, tt);
+            toplevelType = unify(toplevelType, instanceType);
         }
     });
     output.push(
         bt.typeAlias(
             bt.identifier(type.replace(/-/g, '_')),
             null,
-            flowTypeFromType(t!),
+            flowTypeFromType(toplevelType!),
         ),
     );
     return false;
 });
 
 // console.log(generate);
-console.log(output.map((t) => generate.default(t).code).join('\n\n\n'));
+
+fs.writeFileSync(
+    outFile,
+    output.map((t) => generate.default(t).code).join('\n\n\n'),
+    'utf8',
+);
 
 // TODO: start at: need to better merge unions of objects that have string literal values that differ, and should be unified as 'string'
 // Ohhh ok so just make a `Nullable` type, that will make a bunch of things simpler.
