@@ -433,8 +433,21 @@ const unify = (one: Type, two: Type): Type => {
         case 'union': {
             const result = one.options.slice();
             const tw = two as Union;
-            console.log('union to union', one.options, tw.options);
+            // console.log('union to union', one.options, tw.options);
             tw.options.forEach((option) => {
+                const tag = getTag(option);
+                if (tag) {
+                    const added = result.some((item, i) => {
+                        const itag = getTag(item);
+                        if (itag === tag) {
+                            result[i] = unify(item, option);
+                            return true;
+                        }
+                    });
+                    if (added) {
+                        return;
+                    }
+                }
                 if (result.some((v) => typesEqual(v, option))) {
                     return;
                 }
@@ -445,6 +458,13 @@ const unify = (one: Type, two: Type): Type => {
     }
     // return { type: 'union', options: [one, two] };
 };
+
+const getTag = (t: Type) =>
+    t.type === 'object' &&
+    t.attributes.type != null &&
+    t.attributes.type.type === 'literal'
+        ? t.attributes.type.value
+        : null;
 
 const MAX_LITERAL_STRING = 20;
 
@@ -522,8 +542,6 @@ const typeFromValue = (value: unknown): Type => {
     console.log(value);
     throw new Error(`not handled`);
 };
-
-// const typesByWidget =
 
 const output: Array<bt.TypeAlias> = [];
 
