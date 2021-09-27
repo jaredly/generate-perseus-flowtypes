@@ -73,9 +73,15 @@ const flowTypeFromType = (t: Type): bt.FlowType => {
         case 'union':
             return bt.unionTypeAnnotation(t.options.map(flowTypeFromType));
         case 'empty-array':
-            return bt.arrayTypeAnnotation(bt.emptyTypeAnnotation());
+            return bt.genericTypeAnnotation(
+                bt.identifier('$ReadOnlyArray'),
+                bt.typeParameterInstantiation([bt.emptyTypeAnnotation()]),
+            );
         case 'array':
-            return bt.arrayTypeAnnotation(flowTypeFromType(t.item));
+            return bt.genericTypeAnnotation(
+                bt.identifier('$ReadOnlyArray'),
+                bt.typeParameterInstantiation([flowTypeFromType(t.item)]),
+            );
         case 'map':
             return bt.objectTypeAnnotation(
                 [],

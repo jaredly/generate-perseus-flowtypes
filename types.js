@@ -1,18 +1,18 @@
 // @flow
 
 type categorizer = {
-  categories: string[],
+  categories: $ReadOnlyArray<string>,
   highlightLint?: boolean,
-  items: string[],
+  items: $ReadOnlyArray<string>,
   linterContext?: {
     contentType: "",
     highlightLint: boolean,
-    paths: empty[],
-    stack: empty[],
+    paths: $ReadOnlyArray<empty>,
+    stack: $ReadOnlyArray<empty>,
   },
   randomizeItems?: boolean,
   static?: boolean,
-  values: (?number)[],
+  values: $ReadOnlyArray<?number>,
 };
 
 type simulator = {
@@ -32,50 +32,50 @@ type image = {
   },
   box: [number, number],
   caption?: string,
-  labels: {
+  labels: $ReadOnlyArray<{
     alignment: "center" | "right",
     content: string,
     coordinates: [number, number],
-  }[] | {
+  }> | $ReadOnlyArray<{
     alignment: "center",
     content: string,
     coordinates: [number, number],
-  }[] | {
+  }> | $ReadOnlyArray<{
     alignment: "center",
     content: string,
     coordinates: [number, number],
-  }[] | {
+  }> | $ReadOnlyArray<{
     alignment: "center",
     content: string,
     coordinates: [number, number],
-  }[],
+  }>,
   range: [[number, number], [number, number]],
   static?: boolean,
   title?: string,
 };
 
 type orderer = {
-  correctOptions: {
+  correctOptions: $ReadOnlyArray<{
     content: string
-  }[],
+  }>,
   height: "normal" | "auto" | "large",
   layout: "vertical" | "horizontal",
-  options?: {
+  options?: $ReadOnlyArray<{
     content: string
-  }[],
-  otherOptions: {
+  }>,
+  otherOptions: $ReadOnlyArray<{
     content: string
-  }[],
+  }>,
 };
 
 type radio = {
-  choices: {
+  choices: $ReadOnlyArray<{
     clue?: string,
     content?: string,
     correct?: boolean,
     isNoneOfTheAbove?: boolean,
     widgets?: PerseusWidgets,
-  }[],
+  }>,
   countChoices?: boolean,
   deselectEnabled?: boolean,
   displayCount?: number,
@@ -87,7 +87,7 @@ type radio = {
 };
 
 type grapher = {
-  availableTypes: ("linear" | "absolute_value" | "quadratic" | "exponential" | "logarithm" | "sinusoid" | "tangent")[],
+  availableTypes: $ReadOnlyArray<"linear" | "absolute_value" | "quadratic" | "exponential" | "logarithm" | "sinusoid" | "tangent">,
   correct: {
     type: "logarithm",
     asymptote: [[number, number], [number, number]],
@@ -123,7 +123,7 @@ type grapher = {
       width?: number,
     },
     box?: [number, number],
-    editableSettings?: ("graph" | "snap" | "image" | "measure")[],
+    editableSettings?: $ReadOnlyArray<"graph" | "snap" | "image" | "measure">,
     gridStep?: [number, number],
     labels: ["x" | "\\text{Boats}" | "" | "\\text{Time}" | "Time (seconds)", "y" | "\\text{Cars}" | "f(x)" | "" | "\\text{Water}" | "Files (megabytes)"],
     markings: "graph" | "none" | "grid",
@@ -152,25 +152,25 @@ type graded_group = {
 };
 
 type table = {
-  answers: string[][],
+  answers: $ReadOnlyArray<$ReadOnlyArray<string>>,
   columns: number,
-  headers: ("" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$")[],
+  headers: $ReadOnlyArray<"" | "Compound" | "x" | "y" | "$u$" | "$v$" | "$x$" | "$y$">,
   rows: number,
 };
 
 type label_image = {
-  choices: string[],
+  choices: $ReadOnlyArray<string>,
   hideChoicesFromInstructions: boolean,
   imageAlt: string,
   imageHeight: number,
   imageUrl: string,
   imageWidth: number,
-  markers: {
-    answers: string[],
+  markers: $ReadOnlyArray<{
+    answers: $ReadOnlyArray<string>,
     label: string,
     x: number,
     y: number,
-  }[],
+  }>,
   multipleAnswers: boolean,
   static: boolean,
 };
@@ -178,13 +178,13 @@ type label_image = {
 type transformer = {
   correct: {
     shape: {
-      type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6" | "angle" | "line" | "circle")[],
-      coords: [number, number][],
-      options?: {
+      type: $ReadOnlyArray<"polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6" | "angle" | "line" | "circle">,
+      coords: $ReadOnlyArray<[number, number]>,
+      options?: $ReadOnlyArray<{
         reflex?: boolean
-      }[],
+      }>,
     },
-    transformations: ({
+    transformations: $ReadOnlyArray<{
       type: "rotation",
       angleDeg: number,
       center: [number, number],
@@ -198,7 +198,7 @@ type transformer = {
       type: "dilation",
       center: [number, number],
       scale: number,
-    })[],
+    }>,
   },
   drawSolutionShape: boolean,
   gradeEmpty: boolean,
@@ -226,15 +226,15 @@ type transformer = {
   listMode: "interactive" | "dynamic" | "static",
   starting: {
     shape: {
-      type: ("polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6")[],
-      coords: [number, number][],
-      options?: {}[],
+      type: $ReadOnlyArray<"polygon-5" | "polygon-3" | "polygon-4" | "lineSegment" | "polygon-6">,
+      coords: $ReadOnlyArray<[number, number]>,
+      options?: $ReadOnlyArray<{}>,
     } | {
       type: "polygon-3",
       coords: [[number, number], [number, number], [number, number]],
     } | {
       type: ["polygon-3" | "lineSegment" | "polygon-4" | "polygon-5" | "polygon-6" | "line" | "circle"],
-      coords: [number, number][],
+      coords: $ReadOnlyArray<[number, number]>,
       options: [{}],
     } | {
       type: ["polygon-3"],
@@ -254,7 +254,7 @@ type transformer = {
       type: "polygon",
       coords: [[number, number], [number, number], [number, number]],
     },
-    transformations: empty[],
+    transformations: $ReadOnlyArray<empty>,
   },
   tools: {
     dilation: {
@@ -293,12 +293,12 @@ type transformer = {
 type group = {
   content: string,
   images: PerseusImages,
-  metadata?: string[],
+  metadata?: $ReadOnlyArray<string>,
   widgets: PerseusWidgets,
 };
 
 type matrix = {
-  answers: (?("11" | number))[][],
+  answers: $ReadOnlyArray<$ReadOnlyArray<?("11" | number)>>,
   cursorPosition: [number, number],
   matrixBoardSize: [number, number],
   prefix: string,
@@ -351,20 +351,20 @@ type measurer = {
 };
 
 type dropdown = {
-  choices: {
+  choices: $ReadOnlyArray<{
     content: string,
     correct: boolean,
-  }[],
+  }>,
   placeholder?: string,
   static?: boolean,
 };
 
 type matcher = {
   labels: [string, string],
-  left: string[],
+  left: $ReadOnlyArray<string>,
   orderMatters: boolean,
   padding: boolean,
-  right: string[],
+  right: $ReadOnlyArray<string>,
 };
 
 type explanation = {
@@ -376,15 +376,15 @@ type explanation = {
 };
 
 type sequence = {
-  json: {
+  json: $ReadOnlyArray<{
     content: string,
     images: PerseusImages,
     widgets: PerseusWidgets,
-  }[]
+  }>
 };
 
 type sorter = {
-  correct: string[],
+  correct: $ReadOnlyArray<string>,
   layout: "horizontal" | "vertical",
   padding: boolean,
 };
@@ -408,16 +408,16 @@ type number_line = {
 };
 
 type graded_group_set = {
-  gradedGroups: empty[]
+  gradedGroups: $ReadOnlyArray<empty>
 };
 
 type cs_program = {
   height: number,
   programID: "5735507881820160" | "6729568946552832" | "" | "5900231381221376" | "5241695823331328",
-  settings: {
+  settings: $ReadOnlyArray<{
     name: "question" | "" | "probHeads",
     value: string,
-  }[],
+  }>,
   showButtons: boolean,
   showEditor: boolean,
   static?: boolean,
@@ -430,15 +430,15 @@ type passage_ref_target = {
 };
 
 type numeric_input = {
-  answers: {
-    answerForms?: ("decimal" | "proper" | "improper" | "mixed" | "integer" | "pi")[] | ("proper" | "improper" | "mixed" | "decimal" | "integer" | "pi")[],
+  answers: $ReadOnlyArray<{
+    answerForms?: $ReadOnlyArray<"decimal" | "proper" | "improper" | "mixed" | "integer" | "pi"> | $ReadOnlyArray<"proper" | "improper" | "mixed" | "decimal" | "integer" | "pi">,
     maxError?: number,
     message: string,
     simplify: "required" | "optional" | boolean | "accepted" | "enforced",
     status: "correct" | "wrong" | "ungraded",
     strict: boolean,
     value?: number,
-  }[],
+  }>,
   backgroundImage?: {
     height: number,
     url: string,
@@ -446,7 +446,7 @@ type numeric_input = {
   },
   box?: [number, number],
   coefficient?: boolean,
-  editableSettings?: ("graph" | "snap" | "image" | "measure")[],
+  editableSettings?: $ReadOnlyArray<"graph" | "snap" | "image" | "measure">,
   gridStep?: [number, number],
   labelText?: string,
   labels?: ["x", "y"],
@@ -473,7 +473,7 @@ type definition = {
 };
 
 type interaction = {
-  elements: ({
+  elements: $ReadOnlyArray<{
     type: "point",
     key: string,
     options: {
@@ -570,7 +570,7 @@ type interaction = {
       startX: "0" | "8" | "7" | "0.5" | "1" | "1.5" | "2",
       startY: "0" | "6" | "1" | "-1" | "5" | "10" | "15",
     },
-  })[],
+  }>,
   graph: {
     backgroundImage?: {
       bottom?: number,
@@ -600,19 +600,19 @@ type interaction = {
 
 type plotter = {
   type: "pic",
-  categories: string[],
-  correct: number[],
+  categories: $ReadOnlyArray<string>,
+  correct: $ReadOnlyArray<number>,
   labelInterval: number,
   labels: [string, string],
   maxY: number,
   picUrl: string,
   scaleY: number,
   snapsPerLine: number,
-  starting: number[],
+  starting: $ReadOnlyArray<number>,
 } | {
   type: "bar",
-  categories: string[],
-  correct: number[],
+  categories: $ReadOnlyArray<string>,
+  correct: $ReadOnlyArray<number>,
   labelInterval: number,
   labels: [string, string],
   maxY: number,
@@ -622,37 +622,37 @@ type plotter = {
   plotDimensions?: [number, number],
   scaleY: number,
   snapsPerLine: number,
-  starting: number[],
+  starting: $ReadOnlyArray<number>,
 } | {
   type: "dotplot",
-  categories: string[],
-  correct: number[],
+  categories: $ReadOnlyArray<string>,
+  correct: $ReadOnlyArray<number>,
   labelInterval: number,
   labels: [string, ""],
   maxY: number,
   scaleY: number,
   snapsPerLine: number,
-  starting: number[],
+  starting: $ReadOnlyArray<number>,
 } | {
   type: "line",
-  categories: string[],
-  correct: number[],
+  categories: $ReadOnlyArray<string>,
+  correct: $ReadOnlyArray<number>,
   labelInterval: number,
   labels: [string, string],
   maxY: number,
   scaleY: number,
   snapsPerLine: number,
-  starting: number[],
+  starting: $ReadOnlyArray<number>,
 } | {
   type: "histogram",
-  categories: ("$0$" | "$100$" | "$200$" | "$300$" | "$25$" | "$50$" | "$75$" | "$5$" | "$10$" | "$15$" | "$20$" | "$3$" | "$6$" | "$9$" | "$12$" | "$40$" | "$60$" | "$80$" | "$4$" | "$8$" | "$30$" | "$90$" | "$120$" | "$45$" | "$150$" | "$250$" | "$450$" | "$600$" | "$16$")[],
-  correct: number[],
+  categories: $ReadOnlyArray<"$0$" | "$100$" | "$200$" | "$300$" | "$25$" | "$50$" | "$75$" | "$5$" | "$10$" | "$15$" | "$20$" | "$3$" | "$6$" | "$9$" | "$12$" | "$40$" | "$60$" | "$80$" | "$4$" | "$8$" | "$30$" | "$90$" | "$120$" | "$45$" | "$150$" | "$250$" | "$450$" | "$600$" | "$16$">,
+  correct: $ReadOnlyArray<number>,
   labelInterval: null,
   labels: [string, string],
   maxY: number,
   scaleY: number,
   snapsPerLine: number,
-  starting: number[],
+  starting: $ReadOnlyArray<number>,
 };
 
 type interactive_graph = {
@@ -667,18 +667,18 @@ type interactive_graph = {
   box?: [number, number],
   correct: {
     type: "point",
-    coords?: [number, number][],
+    coords?: $ReadOnlyArray<[number, number]>,
     numPoints?: number | "unlimited",
   } | {
     type: "linear",
     coords?: [[number, number], [number, number]],
   } | {
     type: "segment",
-    coords: [[number, number], [number, number]][],
+    coords: $ReadOnlyArray<[[number, number], [number, number]]>,
     numSegments?: number,
   } | {
     type: "polygon",
-    coords: [number, number][],
+    coords: $ReadOnlyArray<[number, number]>,
     match?: "congruent" | "similar" | "exact",
     numSides?: number | "unlimited",
     showAngles?: boolean,
@@ -706,7 +706,7 @@ type interactive_graph = {
     type: "sinusoid",
     coords: [[number, number], [number, number]],
   },
-  editableSettings?: ("graph" | "snap" | "image" | "measure")[],
+  editableSettings?: $ReadOnlyArray<"graph" | "snap" | "image" | "measure">,
   graph?: {
     type: "point",
     numPoints?: number | "unlimited",
@@ -754,10 +754,10 @@ type iframe = {
   allowFullScreen: boolean,
   allowTopNavigation?: boolean,
   height: "420" | "405" | "410" | "400" | "300" | "200" | "" | "340" | "500" | "440" | number | "350" | "130" | "140",
-  settings: {
+  settings: $ReadOnlyArray<{
     name: string,
     value: string,
-  }[],
+  }>,
   static?: boolean,
   url: string,
   width: "840" | "425" | "440" | "410" | "420" | "400" | "" | "405" | number | "800" | "380" | "480" | "415",
@@ -766,7 +766,7 @@ type iframe = {
 type lights_puzzle = {
   flipPattern?: "x" | "plus",
   gradeIncompleteAsWrong: boolean,
-  startCells: boolean[][],
+  startCells: $ReadOnlyArray<$ReadOnlyArray<boolean>>,
   static?: boolean,
 };
 
@@ -776,8 +776,8 @@ type video = {
 };
 
 type expression = {
-  answerForms?: {
-    buttonSets?: ("basic" | "trig" | "prealgebra" | "logarithms" | "basic+div" | "advanced relations")[],
+  answerForms?: $ReadOnlyArray<{
+    buttonSets?: $ReadOnlyArray<"basic" | "trig" | "prealgebra" | "logarithms" | "basic+div" | "advanced relations">,
     buttonsVisible?: "focused",
     considered: "correct" | "wrong" | "ungraded",
     draggable?: boolean,
@@ -792,23 +792,23 @@ type expression = {
       widgetId: "undefined-0",
     },
     form?: boolean,
-    functions?: ["f", "g", "h"] | empty[],
+    functions?: ["f", "g", "h"] | $ReadOnlyArray<empty>,
     highlightLint?: boolean,
     key?: number | "1" | "2" | "0" | "null" | "3" | "4",
     linterContext?: {
       contentType: "",
       highlightLint: boolean,
-      paths: empty[],
-      stack: empty[],
+      paths: $ReadOnlyArray<empty>,
+      stack: $ReadOnlyArray<empty>,
     },
     simplify?: boolean,
     times?: boolean,
     value?: string,
-  }[],
-  buttonSets?: ("basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms" | "trig" | "basic+div")[],
+  }>,
+  buttonSets?: $ReadOnlyArray<"basic" | "prealgebra" | "basic relations" | "advanced relations" | "logarithms" | "trig" | "basic+div">,
   buttonsVisible?: "never",
   form?: boolean,
-  functions: string[] | empty[],
+  functions: $ReadOnlyArray<string> | $ReadOnlyArray<empty>,
   placeholder?: string,
   simplify?: boolean,
   static?: boolean,
